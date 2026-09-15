@@ -1,0 +1,398 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_1",
+      "email": "admin@ukfiresafety.co.uk",
+      "name": "David Miller (Lead Assessor)",
+      "role": "OWNER",
+      "position": "Principal Fire Safety Consultant & Assessor",
+      "telephone": "020 7946 0852",
+      "createdAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "usr_assessor_2",
+      "email": "sarah.jenkins@ukfiresafety.co.uk",
+      "name": "Sarah Jenkins (MIFireE)",
+      "role": "ASSESSOR",
+      "position": "Senior Fire Risk Assessor",
+      "telephone": "07700 900341",
+      "createdAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "email": "david@millerbooks.co.uk",
+      "name": "David Miller",
+      "role": "CLIENT",
+      "clientId": "cli_1789501858494_3ue18b",
+      "organisationName": "Miller Books Ltd",
+      "telephone": "02079460123",
+      "position": "Business Owner / Responsible Person",
+      "id": "usr_1789501858495_0b43bs",
+      "createdAt": "2026-09-15T19:50:58.495Z"
+    }
+  ],
+  "clients": [
+    {
+      "companyName": "Miller Books Ltd",
+      "clientType": "Commercial",
+      "contactName": "David Miller",
+      "position": "Business Owner / Responsible Person",
+      "email": "david@millerbooks.co.uk",
+      "telephone": "02079460123",
+      "billingAddress": "12 Fleet Street, London, EC4Y 1AA",
+      "preferredContactMethod": "Email",
+      "status": "Quoted",
+      "notes": "Generated via Aurelius Instant Commercial Quote Engine on 15/09/2026",
+      "id": "cli_1789501858494_3ue18b",
+      "isArchived": false,
+      "createdAt": "2026-09-15T19:50:58.494Z",
+      "updatedAt": "2026-09-15T19:50:58.494Z"
+    }
+  ],
+  "premises": [
+    {
+      "clientId": "cli_1789501858494_3ue18b",
+      "premisesName": "Miller Books Ltd - Shops & Retail",
+      "addressLine1": "12 Fleet Street",
+      "townCity": "London",
+      "county": "Commercial Area",
+      "postcode": "EC4Y 1AA",
+      "country": "United Kingdom",
+      "jurisdiction": "England & Wales",
+      "premisesType": "Shops & Retail",
+      "occupancyType": "Shops & Retail",
+      "approxFloorAreaSqM": 120,
+      "numberOfFloors": 1,
+      "numberOfBasements": 0,
+      "maxOccupancy": 15,
+      "numberOfEmployees": 5,
+      "sleepingAccommodation": false,
+      "vulnerablePersonsPresent": false,
+      "disabledPersonsPresent": false,
+      "publicAccess": true,
+      "multiOccupancyBuilding": false,
+      "responsiblePerson": "David Miller",
+      "status": "Ready for assessment",
+      "id": "prm_1789501858495_629pw2",
+      "isArchived": false,
+      "createdAt": "2026-09-15T19:50:58.495Z",
+      "updatedAt": "2026-09-15T19:50:58.495Z"
+    }
+  ],
+  "onboarding": [],
+  "enquiries": [],
+  "quotes": [
+    {
+      "clientId": "cli_1789501858494_3ue18b",
+      "premisesId": "prm_1789501858495_629pw2",
+      "date": "2026-09-15",
+      "expiryDate": "2026-10-15",
+      "scope": "Commercial Life Safety Fire Risk Assessment (PAS 79-1:2020 / Regulatory Reform (Fire Safety) Order 2005) for Shops & Retail (Non-Sleeping). Conducted by NEBOSH-certified assessor Charlie Hughes.",
+      "serviceType": "Commercial Fire Risk Assessment (NEBOSH Style)",
+      "items": [
+        {
+          "id": "item_1",
+          "description": "Comprehensive Life Safety Fire Risk Assessment: Shops & Retail (PAS 79-1:2020)",
+          "quantity": 1,
+          "unitPrice": 350,
+          "total": 350
+        }
+      ],
+      "netAmount": 350,
+      "vatRate": 0.2,
+      "vatAmount": 70,
+      "totalAmount": 420,
+      "assumptions": [
+        "Visual, non-destructive fire risk assessment in accordance with PAS 79-1:2020 and RRFSO 2005.",
+        "Premises operates as a commercial non-sleeping facility (Level 1-3 visual compliance; no residential sleeping Level 4 intrusive sampling).",
+        "Assessor is granted full access to all escape routes, fire alarm panels, emergency lighting, and electrical distribution boards."
+      ],
+      "exclusions": [
+        "Intrusive destructive structural sampling (residential Level 4 sleeping surveys).",
+        "Physical testing or servicing of fire extinguishers or alarm sensors (visual audit of records and equipment only)."
+      ],
+      "termsSummary": "Aurelius Fixed Commercial Price Guarantee. Valid for 30 days. Includes formal executive summary, significant findings action plan, and 12-month compliance guarantee.",
+      "status": "Sent",
+      "id": "qte_1789501858495_seky41",
+      "quoteNumber": "QTE-1001",
+      "createdAt": "2026-09-15T19:50:58.495Z",
+      "updatedAt": "2026-09-15T19:50:58.495Z"
+    }
+  ],
+  "invoices": [],
+  "payments": [],
+  "appointments": [],
+  "documents": [],
+  "fras": [],
+  "actions": [],
+  "messages": [
+    {
+      "clientId": "cli_1789501858494_3ue18b",
+      "premisesId": "prm_1789501858495_629pw2",
+      "senderUserId": "usr_admin_1",
+      "senderName": "Charlie Hughes (Aurelius Fire Safety)",
+      "senderRole": "admin",
+      "messageText": "Dear David Miller,\n\nThank you for requesting an instant fire risk assessment quote for Miller Books Ltd (12 Fleet Street, London, EC4Y 1AA).\n\nYour fixed commercial quote is £350.00 + VAT (Total £420.00 inc. VAT).\n\nAssessor: Charlie Hughes (NEBOSH Fire Safety)\nStandards: PAS 79-1:2020 & Regulatory Reform (Fire Safety) Order 2005\nPremises Classification: Commercial Non-Sleeping\n\nYou can review, print, accept this quote, or book your preferred inspection date directly through your Aurelius Client Portal.\n\nBest regards,\nCharlie Hughes\nFounder & Principal Assessor\nAurelius Commercial Fire Safety\n020 8050 4912",
+      "readByAdmin": true,
+      "readByClient": false,
+      "id": "msg_1789501858496_58ch9n",
+      "createdAt": "2026-09-15T19:50:58.496Z"
+    }
+  ],
+  "notifications": [
+    {
+      "recipientRole": "admin",
+      "title": "New Commercial Quote Requested: QTE-1001",
+      "message": "David Miller (Miller Books Ltd) generated an instant commercial quote for Shops & Retail: £420.00 inc VAT.",
+      "linkUrl": "/admin/quotes",
+      "isRead": false,
+      "id": "notif_1789501858496_j179qp",
+      "createdAt": "2026-09-15T19:50:58.496Z"
+    },
+    {
+      "recipientRole": "client",
+      "clientId": "cli_1789501858494_3ue18b",
+      "title": "Instant Quote Dispatched: QTE-1001",
+      "message": "Your formal commercial quote for 12 Fleet Street, London, EC4Y 1AA has been generated and dispatched to david@millerbooks.co.uk.",
+      "linkUrl": "/client/quotes/qte_1789501858495_seky41",
+      "isRead": false,
+      "id": "notif_1789501858496_g16t0m",
+      "createdAt": "2026-09-15T19:50:58.496Z"
+    }
+  ],
+  "auditLogs": [],
+  "policies": [
+    {
+      "key": "terms_and_conditions",
+      "title": "Terms and Conditions of Service",
+      "version": "2.1 (2026)",
+      "content": "1. APPOINTMENT & SCOPE OF SERVICE\n1.1 Apex Fire Risk Assessment Services Ltd (\"the Assessor\") is appointed to carry out a non-destructive, visual fire risk assessment of the nominated premises.\n1.2 The assessment is carried out in accordance with PAS 79-1:2020 and the relevant statutory requirements: the Regulatory Reform (Fire Safety) Order 2005 for England and Wales; the Fire (Scotland) Act 2005 for Scotland; and the Fire and Rescue Services (Northern Ireland) Order 2006 for Northern Ireland.\n\n2. STATUTORY RESPONSIBILITY OF THE RESPONSIBLE PERSON\n2.1 Engaging the Assessor does not transfer, diminish, or extinguish the statutory duty of the Responsible Person (or Dutyholder in Scotland).\n2.2 The client remains solely responsible in law for the ongoing management of fire precautions, maintenance of fire safety equipment, provision of staff training, and the implementation of recommended action items.\n\n3. ACCESS & INFORMATION\n3.1 The client agrees to provide safe and unhindered access to all accessible areas of the premises, including service risers, plant rooms, roof voids, and escape routes.\n3.2 The client must disclose all relevant prior documentation including previous FRAs, fire alarm testing certificates, emergency lighting certificates, electrical installation condition reports (EICR), and fire strategy drawings.\n\n4. PAYMENT TERMS\n4.1 For new clients, payment of quotes or deposits is required prior to the confirmation of on-site assessment appointments, unless credit terms have been formally agreed in writing.\n4.2 Invoices are strictly payable within 14 calendar days of issue. Overdue amounts may incur statutory interest under the Late Payment of Commercial Debts (Interest) Act 1998.\n\n5. CANCELLATION & RESCHEDULING\n5.1 Cancellations received with more than 48 hours' notice prior to the booked appointment will receive a full refund or free rescheduling.\n5.2 Cancellations or access refusals occurring within 24 hours of the appointment are subject to a cancellation charge equal to 50% of the net assessment fee.",
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "key": "privacy_notice",
+      "title": "UK GDPR & Data Protection Privacy Notice",
+      "version": "1.4 (2026)",
+      "content": "1. INTRODUCTION\nApex Fire Risk Assessment Services Ltd is committed to protecting the privacy and security of your personal data in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.\n\n2. WHAT DATA WE COLLECT\nWe collect personal identification details (names, job titles, business emails, telephone numbers), premises contact details, billing information, and compliance evidence documents submitted through our client portal.\n\n3. LAWFUL BASIS FOR PROCESSING\nWe process personal data on the basis of (a) Contractual necessity for performing fire safety assessment services, (b) Legal obligation to maintain records for fire authority audits, and (c) Legitimate interest in managing business communications.\n\n4. RETENTION PERIODS\nFire risk assessments, compliance certificates, and client audit records are retained for a minimum of 7 years in accordance with professional indemnity and UK statutory limitation periods.\n\n5. YOUR RIGHTS\nYou have the right to request access to, rectification of, or erasure of your personal data under UK GDPR. Contact our Data Protection Officer at compliance@apexfireuk.co.uk.",
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "key": "cancellation_policy",
+      "title": "Cancellation and Rescheduling Policy",
+      "version": "1.2",
+      "content": "Clients may reschedule confirmed assessment appointments up to 48 hours prior to the scheduled start time without penalty. Where our assessors attend a site and access cannot be gained due to no keyholder being present, a re-attendance fee of £150 + VAT applies.",
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "key": "complaints_procedure",
+      "title": "Complaints Procedure",
+      "version": "1.1",
+      "content": "We are committed to delivering the highest technical standard in fire risk assessment. If you have any dissatisfaction with our service, report or findings, please submit written details to compliance@apexfireuk.co.uk within 14 calendar days. A senior assessor will review and respond formally within 5 working days.",
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "key": "document_retention",
+      "title": "Document Retention Policy",
+      "version": "1.0",
+      "content": "All client records, fire risk assessment reports, evidence photographs, and action tracking items are archived securely and retained for 7 years following assessment completion in accordance with UK professional indemnity guidelines.",
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    }
+  ],
+  "pricingRules": [
+    {
+      "id": "pr_base",
+      "ruleKey": "base_assessment",
+      "ruleName": "Base Assessment Fee",
+      "description": "Standard single-premises assessment base cost",
+      "category": "base",
+      "basePrice": 350,
+      "multiplier": 1,
+      "flatFee": 350,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_type_care",
+      "ruleKey": "type_care_home",
+      "ruleName": "Care Home / Healthcare Multiplier",
+      "description": "Higher complexity due to vulnerable residents and progressive horizontal evacuation",
+      "category": "premises_type",
+      "basePrice": 0,
+      "multiplier": 1.6,
+      "flatFee": 150,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_type_hotel",
+      "ruleKey": "type_hotel_sleeping",
+      "ruleName": "Hotel / Sleeping Risk Factor",
+      "description": "Sleeping accommodation requiring detailed evacuation and detection audits",
+      "category": "premises_type",
+      "basePrice": 0,
+      "multiplier": 1.45,
+      "flatFee": 120,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_type_hmo",
+      "ruleKey": "type_residential_hmo",
+      "ruleName": "Residential Flats / HMO Common Parts",
+      "description": "Common parts fire risk assessment under Fire Safety Act 2021",
+      "category": "premises_type",
+      "basePrice": 0,
+      "multiplier": 1.15,
+      "flatFee": 50,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_area_large",
+      "ruleKey": "area_over_500m2",
+      "ruleName": "Floor Area 500m² - 1500m²",
+      "description": "Medium-to-large premises additional time allowance",
+      "category": "floor_area",
+      "basePrice": 0,
+      "multiplier": 1.25,
+      "flatFee": 95,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_area_xlarge",
+      "ruleKey": "area_over_1500m2",
+      "ruleName": "Floor Area > 1500m²",
+      "description": "Large commercial complex / industrial facility",
+      "category": "floor_area",
+      "basePrice": 0,
+      "multiplier": 1.5,
+      "flatFee": 200,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_floors_high",
+      "ruleKey": "floors_4_plus",
+      "ruleName": "Building Height (4+ Storeys)",
+      "description": "Additional vertical escape route inspections",
+      "category": "floors",
+      "basePrice": 0,
+      "multiplier": 1.15,
+      "flatFee": 75,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_sleeping_risk",
+      "ruleKey": "sleeping_risk",
+      "ruleName": "Sleeping Risk Surcharge",
+      "description": "Premises with sleeping occupants (night-time vulnerability)",
+      "category": "risk",
+      "basePrice": 0,
+      "multiplier": 1.2,
+      "flatFee": 95,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_multi_occ",
+      "ruleKey": "multi_occupancy",
+      "ruleName": "Multi-Occupancy Shared Areas",
+      "description": "Coordination and cooperation under Article 22 of FSO 2005",
+      "category": "occupancy",
+      "basePrice": 0,
+      "multiplier": 1.1,
+      "flatFee": 65,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_travel",
+      "ruleKey": "travel_charge",
+      "ruleName": "Assessor Travel Allowance",
+      "description": "Standard travel and logistics fee outside M25 / Greater London",
+      "category": "charges",
+      "basePrice": 0,
+      "multiplier": 1,
+      "flatFee": 45,
+      "isEnabled": false,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_out_of_hours",
+      "ruleKey": "out_of_hours",
+      "ruleName": "Out-of-Hours Assessment (Evenings)",
+      "description": "Site visits scheduled before 08:30 or after 18:00",
+      "category": "charges",
+      "basePrice": 0,
+      "multiplier": 1.25,
+      "flatFee": 110,
+      "isEnabled": false,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_weekend",
+      "ruleKey": "weekend_assessment",
+      "ruleName": "Weekend Assessment Surcharge",
+      "description": "Saturday or Sunday site inspection",
+      "category": "charges",
+      "basePrice": 0,
+      "multiplier": 1.4,
+      "flatFee": 160,
+      "isEnabled": false,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    },
+    {
+      "id": "pr_review_fra",
+      "ruleKey": "review_fra_discount",
+      "ruleName": "Annual Review of Existing Assessment",
+      "description": "Subsequent year review where previous assessment on file",
+      "category": "services",
+      "basePrice": 280,
+      "multiplier": 0.85,
+      "flatFee": -50,
+      "isEnabled": true,
+      "updatedAt": "2026-09-15T19:31:32.618Z"
+    }
+  ],
+  "settings": {
+    "businessName": "Apex Fire Risk Assessment Services Ltd",
+    "tradingName": "Apex Fire Safety UK",
+    "companyNumber": "12849502",
+    "vatRegistered": true,
+    "vatNumber": "GB 384 9281 05",
+    "vatRatePercent": 20,
+    "address": "Suite 4B, St Pauls House, 8-12 Warwick Lane, London",
+    "postcode": "EC4M 7BP",
+    "telephone": "020 7946 0852",
+    "email": "compliance@apexfireuk.co.uk",
+    "website": "https://apexfireuk.co.uk",
+    "assessorAccreditation": "IFE Registered Fire Risk Assessor / Tier 3 Nationally Accredited",
+    "quotePrefix": "QTE-",
+    "nextQuoteNumber": 1002,
+    "invoicePrefix": "INV-",
+    "nextInvoiceNumber": 2001,
+    "defaultQuoteValidityDays": 30,
+    "reminderDaysBeforeExpiry": [
+      30,
+      14,
+      7
+    ],
+    "workingHoursStart": "08:30",
+    "workingHoursEnd": "17:30",
+    "slotDurationMinutes": 120,
+    "companyName": "Apex Fire Safety UK",
+    "registeredAddress": "Suite 4B, St Pauls House, 8-12 Warwick Lane, London, EC4M 7BP",
+    "baseAssessmentFee": 350,
+    "vatPercentage": 20,
+    "statutoryStatement": "Carried out in accordance with the Regulatory Reform (Fire Safety) Order 2005 / PAS 79-1:2020. Findings remain valid for 12 months subject to material alterations.",
+    "stripeMode": "test",
+    "stripePublishableKey": "",
+    "stripeSecretKey": "",
+    "stripeWebhookSecret": "",
+    "stripeAccountId": "",
+    "stripeStatementDescriptor": "APEX FIRE SAFETY",
+    "stripeAutoReceipts": true,
+    "stripeCurrency": "GBP"
+  }
+}

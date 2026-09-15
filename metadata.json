@@ -1,0 +1,8 @@
+{
+  "name": "Aurelius - Commercial Fire Risk Assessments",
+  "description": "Commercial NEBOSH-style Fire Risk Assessments for small shops, offices, and commercial premises (no sleeping risk) by Charlie Hughes at Aurelius. Instant quote engine and client portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
