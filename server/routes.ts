@@ -377,19 +377,12 @@ apiRouter.post('/quotes/instant-dispatch', (req: Request, res: Response) => {
     serviceType: 'Commercial Fire Risk Assessment (NEBOSH Style)',
     items: quoteCalc.items,
     netAmount: quoteCalc.netAmount,
-    vatRate: quoteCalc.vatRate,
-    vatAmount: quoteCalc.vatAmount,
+    vatRate: 0,
+    vatAmount: 0,
     totalAmount: quoteCalc.totalAmount,
-    assumptions: [
-      'Visual, non-destructive fire risk assessment in accordance with PAS 79-1:2020 and RRFSO 2005.',
-      'Premises operates as a commercial non-sleeping facility (Level 1-3 visual compliance; no residential sleeping Level 4 intrusive sampling).',
-      'Assessor is granted full access to all escape routes, fire alarm panels, emergency lighting, and electrical distribution boards.',
-    ],
-    exclusions: [
-      'Intrusive destructive structural sampling (residential Level 4 sleeping surveys).',
-      'Physical testing or servicing of fire extinguishers or alarm sensors (visual audit of records and equipment only).',
-    ],
-    termsSummary: 'Aurelius Fixed Commercial Price Guarantee. Valid for 30 days. Includes formal executive summary, significant findings action plan, and 12-month compliance guarantee.',
+    assumptions: quoteCalc.assumptions,
+    exclusions: quoteCalc.exclusions,
+    termsSummary: 'Aurelius Fixed Commercial Price Guarantee. Valid for 30 days. Flat fee with no VAT. Includes formal executive summary, significant findings action plan, and 12-month compliance guarantee.',
     status: 'Sent',
   });
 
@@ -400,7 +393,7 @@ apiRouter.post('/quotes/instant-dispatch', (req: Request, res: Response) => {
     senderUserId: 'usr_admin_1',
     senderName: 'Charlie Hughes (Aurelius Fire Safety)',
     senderRole: 'admin',
-    messageText: `Dear ${name},\n\nThank you for requesting an instant fire risk assessment quote for ${company} (${premisesAddress}).\n\nYour fixed commercial quote is £${quote.netAmount.toFixed(2)} + VAT (Total £${quote.totalAmount.toFixed(2)} inc. VAT).\n\nAssessor: Charlie Hughes (NEBOSH Fire Safety)\nStandards: PAS 79-1:2020 & Regulatory Reform (Fire Safety) Order 2005\nPremises Classification: Commercial Non-Sleeping\n\nYou can review, print, accept this quote, or book your preferred inspection date directly through your Aurelius Client Portal.\n\nBest regards,\nCharlie Hughes\nFounder & Principal Assessor\nAurelius Commercial Fire Safety\n020 8050 4912`,
+    messageText: `Dear ${name},\n\nThank you for requesting an instant commercial fire risk assessment quote for ${company} (${premisesAddress}).\n\nYour fixed commercial quote is £${quote.totalAmount.toFixed(2)} (Flat fee, No VAT).\n\nAssessor: Charlie Hughes (NEBOSH Fire Safety Certified)\nStandards: PAS 79-1:2020 & Regulatory Reform (Fire Safety) Order 2005\nPremises Classification: Commercial Non-Sleeping\n\nYou can review, print, accept this quote, or book your preferred inspection date directly through your Aurelius Client Portal.\n\nBest regards,\nCharlie Hughes\nFounder & Principal Assessor\nAurelius Commercial Fire Safety\n020 8050 4912`,
     readByAdmin: true,
     readByClient: false,
   });
@@ -418,7 +411,7 @@ apiRouter.post('/quotes/instant-dispatch', (req: Request, res: Response) => {
   db.createNotification({
     recipientRole: 'admin',
     title: `New Commercial Quote Requested: ${quote.quoteNumber}`,
-    message: `${name} (${company}) generated an instant commercial quote for ${premisesType}: £${quote.totalAmount.toFixed(2)} inc VAT.`,
+    message: `${name} (${company}) generated an instant commercial quote for ${premisesType}: £${quote.totalAmount.toFixed(2)} (No VAT).`,
     linkUrl: `/admin/quotes`,
   });
 

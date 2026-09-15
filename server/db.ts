@@ -46,18 +46,18 @@ const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'fra_db.json');
 
 const DEFAULT_SETTINGS: BusinessSettings = {
-  businessName: 'Apex Fire Risk Assessment Services Ltd',
-  tradingName: 'Apex Fire Safety UK',
-  companyNumber: '12849502',
-  vatRegistered: true,
-  vatNumber: 'GB 384 9281 05',
-  vatRatePercent: 20,
-  address: 'Suite 4B, St Pauls House, 8-12 Warwick Lane, London',
-  postcode: 'EC4M 7BP',
-  telephone: '020 7946 0852',
-  email: 'compliance@apexfireuk.co.uk',
-  website: 'https://apexfireuk.co.uk',
-  assessorAccreditation: 'IFE Registered Fire Risk Assessor / Tier 3 Nationally Accredited',
+  businessName: 'Aurelius Fire Safety Ltd',
+  tradingName: 'Aurelius Commercial Fire Safety',
+  companyNumber: '14920831',
+  vatRegistered: false,
+  vatNumber: '',
+  vatRatePercent: 0,
+  address: 'Commercial Assessor Operations, 12 Fleet Street, London',
+  postcode: 'EC4Y 1AA',
+  telephone: '020 8050 4912',
+  email: 'charlie.a.s.hughes@gmail.com',
+  website: 'https://aurelius-firesafety.co.uk',
+  assessorAccreditation: 'NEBOSH Fire Safety Certified • PAS 79-1:2020 Registered Assessor',
   quotePrefix: 'QTE-',
   nextQuoteNumber: 1001,
   invoicePrefix: 'INV-',
@@ -68,12 +68,12 @@ const DEFAULT_SETTINGS: BusinessSettings = {
   workingHoursEnd: '17:30',
   slotDurationMinutes: 120,
   // Assessor Profile
-  companyName: 'Apex Fire Safety UK',
-  registeredAddress: 'Suite 4B, St Pauls House, 8-12 Warwick Lane, London, EC4M 7BP',
-  baseAssessmentFee: 350,
-  vatPercentage: 20,
+  companyName: 'Aurelius Commercial Fire Safety',
+  registeredAddress: '12 Fleet Street, London, EC4Y 1AA',
+  baseAssessmentFee: 245,
+  vatPercentage: 0,
   statutoryStatement:
-    'Carried out in accordance with the Regulatory Reform (Fire Safety) Order 2005 / PAS 79-1:2020. Findings remain valid for 12 months subject to material alterations.',
+    'Commercial Life Safety Fire Risk Assessment conducted strictly in accordance with PAS 79-1:2020 and the Regulatory Reform (Fire Safety) Order 2005 (as amended by the Fire Safety Act 2021 and Section 156 of the Building Safety Act 2022). Non-sleeping commercial premises.',
 
   // Stripe Payment Gateway & CRM Integration
   stripeMode: 'test',
@@ -81,7 +81,7 @@ const DEFAULT_SETTINGS: BusinessSettings = {
   stripeSecretKey: '',
   stripeWebhookSecret: '',
   stripeAccountId: '',
-  stripeStatementDescriptor: 'APEX FIRE SAFETY',
+  stripeStatementDescriptor: 'AURELIUS FIRE SAFETY',
   stripeAutoReceipts: true,
   stripeCurrency: 'GBP',
 };
@@ -89,68 +89,109 @@ const DEFAULT_SETTINGS: BusinessSettings = {
 const DEFAULT_POLICIES: LegalPolicy[] = [
   {
     key: 'terms_and_conditions',
-    title: 'Terms and Conditions of Service',
-    version: '2.1 (2026)',
-    content: `1. APPOINTMENT & SCOPE OF SERVICE
-1.1 Apex Fire Risk Assessment Services Ltd ("the Assessor") is appointed to carry out a non-destructive, visual fire risk assessment of the nominated premises.
-1.2 The assessment is carried out in accordance with PAS 79-1:2020 and the relevant statutory requirements: the Regulatory Reform (Fire Safety) Order 2005 for England and Wales; the Fire (Scotland) Act 2005 for Scotland; and the Fire and Rescue Services (Northern Ireland) Order 2006 for Northern Ireland.
+    title: 'Client Engagement Agreement & Terms of Service',
+    version: '3.0 (2026 Statutory Standard)',
+    content: `1. PARTIES & STATUTORY FRAMEWORK
+1.1 This Agreement is entered into between Aurelius Fire Safety Ltd ("Aurelius", "the Assessor") and the client named in the engagement schedule/quote ("the Client", "Responsible Person").
+1.2 Assessments are conducted by Charlie Hughes (NEBOSH Fire Safety certified) in strict compliance with PAS 79-1:2020 ("Fire risk assessment - Premises other than housing") and the Regulatory Reform (Fire Safety) Order 2005 ("the Order"), as amended by the Fire Safety Act 2021 and Section 156 of the Building Safety Act 2022.
 
-2. STATUTORY RESPONSIBILITY OF THE RESPONSIBLE PERSON
-2.1 Engaging the Assessor does not transfer, diminish, or extinguish the statutory duty of the Responsible Person (or Dutyholder in Scotland).
-2.2 The client remains solely responsible in law for the ongoing management of fire precautions, maintenance of fire safety equipment, provision of staff training, and the implementation of recommended action items.
+2. SPECIFIC COMMERCIAL SCOPE & NON-SLEEPING PREMISES REQUIREMENT
+2.1 Scope of Service: Aurelius specialises exclusively in non-sleeping commercial properties including retail shops, offices, studios, salons, commercial workshops, and customer-facing units.
+2.2 Sleeping Accommodation Strictly Excluded: Aurelius does NOT assess residential blocks of flats, HMOs, hotels, hostels, care homes, or any premises containing sleeping accommodation. The Client warrants that the premises do not contain sleeping occupants.
+2.3 Visual & Non-Destructive Methodology: The assessment is a comprehensive, non-destructive visual audit of visible and readily accessible areas, means of escape, fire separation, fire detection, warning, and emergency lighting. It does not include destructive opening up of building fabric, invasive sampling of concealed voids, or physical testing/commissioning of fire alarm or extinguisher equipment.
 
-3. ACCESS & INFORMATION
-3.1 The client agrees to provide safe and unhindered access to all accessible areas of the premises, including service risers, plant rooms, roof voids, and escape routes.
-3.2 The client must disclose all relevant prior documentation including previous FRAs, fire alarm testing certificates, emergency lighting certificates, electrical installation condition reports (EICR), and fire strategy drawings.
+3. STATUTORY DUTIES OF THE RESPONSIBLE PERSON (BUILDING SAFETY ACT 2022)
+3.1 Non-Transferable Responsibility: Engaging Aurelius does not discharge, transfer, or mitigate the Client's statutory liability under Article 5 of the Order. The Responsible Person remains personally responsible in law for the ongoing safety of relevant persons.
+3.2 Section 156 Compliance: Under Section 156 of the Building Safety Act 2022, the Responsible Person must record their fire risk assessment in full (including all significant findings), record their fire safety arrangements, and record the identity and competence of the fire risk assessor (Charlie Hughes, NEBOSH Fire Safety).
+3.3 Cooperation & Coordination: Where premises are located in a multi-occupied building or shared commercial arcade, the Client must comply with Article 22 of the Order to coordinate fire precautions with co-occupiers and the head landlord.
 
-4. PAYMENT TERMS
-4.1 For new clients, payment of quotes or deposits is required prior to the confirmation of on-site assessment appointments, unless credit terms have been formally agreed in writing.
-4.2 Invoices are strictly payable within 14 calendar days of issue. Overdue amounts may incur statutory interest under the Late Payment of Commercial Debts (Interest) Act 1998.
+4. CLIENT OBLIGATIONS & UNHINDERED ACCESS
+4.1 On-Site Keyholder: The Client shall ensure an authorized keyholder or competent representative is present throughout the site inspection to provide unhindered access to all areas, electrical intakes, plant rooms, risers, and escape routes.
+4.2 Disclosure of Compliance Documentation: The Client must make available all existing fire logbooks, fire alarm and emergency lighting service records, electrical installation condition reports (EICR), portable appliance testing (PAT) records, and records of staff fire drills.
 
-5. CANCELLATION & RESCHEDULING
-5.1 Cancellations received with more than 48 hours' notice prior to the booked appointment will receive a full refund or free rescheduling.
-5.2 Cancellations or access refusals occurring within 24 hours of the appointment are subject to a cancellation charge equal to 50% of the net assessment fee.`,
+5. PRICING, PAYMENT TERMS & ZERO-VAT STRUCTURE
+5.1 Flat Transparent Pricing: All fees quoted by Aurelius are fixed flat prices. Aurelius operates on a transparent flat-fee basis with no VAT added. What is quoted is the final sum payable.
+5.2 Payment Terms: Payment of the agreed fee is required upon acceptance of quote or prior to on-site report release, unless formal 14-day commercial credit terms are agreed in writing.
+5.3 Late Payments: Invoices overdue beyond agreed terms incur statutory interest under the Late Payment of Commercial Debts (Interest) Act 1998.
+
+6. CANCELLATION, RESCHEDULING & SITE ACCESS REFUSAL
+6.1 Client Rescheduling: The Client may reschedule an appointment free of charge by providing written notice at least 48 hours prior to the scheduled attendance.
+6.2 Late Cancellation / No-Show: Cancellations made within 24 hours of attendance, or where the assessor attends site but access cannot be obtained, incur a non-refundable attendance fee of £120.
+
+7. DELIVERABLES, ACTION PLANS & 12-MONTH VALIDITY
+7.1 48-Hour Report Delivery: The completed PAS 79-1:2020 Fire Risk Assessment report, executive summary, and photographic significant findings action plan will be delivered digitally in PDF format within 48 hours of site survey completion.
+7.2 Annual Review: In accordance with Home Office guidance, commercial fire risk assessments must be reviewed at least annually, or immediately if significant alterations occur to premises layout, processes, or occupancy.
+
+8. LIMITATION OF LIABILITY & PROFESSIONAL INDEMNITY
+8.1 Aurelius maintains full Professional Indemnity Insurance (£2,000,000) and Public Liability Insurance (£5,000,000) specifically covering commercial fire risk assessment activities.
+8.2 Aurelius shall not be liable for losses caused by undisclosed hazards, concealed structural defects, deliberate concealment by the Client, or failure by the Client to implement recommended remedial actions.`,
     updatedAt: new Date().toISOString(),
   },
   {
     key: 'privacy_notice',
     title: 'UK GDPR & Data Protection Privacy Notice',
-    version: '1.4 (2026)',
-    content: `1. INTRODUCTION
-Apex Fire Risk Assessment Services Ltd is committed to protecting the privacy and security of your personal data in accordance with the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.
+    version: '2.0 (2026)',
+    content: `1. DATA CONTROLLER
+Aurelius Fire Safety Ltd ("Aurelius", "we", "us") is the data controller for the purposes of the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.
 
-2. WHAT DATA WE COLLECT
-We collect personal identification details (names, job titles, business emails, telephone numbers), premises contact details, billing information, and compliance evidence documents submitted through our client portal.
+2. DATA WE COLLECT
+We collect client contact information (name, business trading name, email address, telephone number), premises addresses, floor plans, photographic evidence collected during fire risk assessments, and compliance documentation.
 
 3. LAWFUL BASIS FOR PROCESSING
-We process personal data on the basis of (a) Contractual necessity for performing fire safety assessment services, (b) Legal obligation to maintain records for fire authority audits, and (c) Legitimate interest in managing business communications.
+We process your personal and business data on the following lawful bases:
+- Contractual Necessity (Article 6(1)(b)): To calculate quotes, schedule assessments, conduct on-site evaluations, and deliver completed reports.
+- Legal Obligation (Article 6(1)(c)): To assist Responsible Persons in satisfying statutory fire risk assessment duties under Article 9 of the Regulatory Reform (Fire Safety) Order 2005.
+- Legitimate Interests (Article 6(1)(f)): To manage audit trails, send mandatory annual review reminders, and maintain professional indemnity documentation.
 
-4. RETENTION PERIODS
-Fire risk assessments, compliance certificates, and client audit records are retained for a minimum of 7 years in accordance with professional indemnity and UK statutory limitation periods.
+4. DATA RETENTION & SECURITY
+All assessment data, photographic evidence, and report archives are stored in encrypted cloud storage for a minimum statutory period of 7 years in accordance with UK professional indemnity requirements. We never sell, trade, or rent personal data to third parties.
 
-5. YOUR RIGHTS
-You have the right to request access to, rectification of, or erasure of your personal data under UK GDPR. Contact our Data Protection Officer at compliance@apexfireuk.co.uk.`,
+5. YOUR STATUTORY RIGHTS
+Under UK GDPR, you have the right to access your personal data, rectify inaccuracies, request data erasure where applicable, or request data portability. For any inquiries, email charlie.a.s.hughes@gmail.com.`,
     updatedAt: new Date().toISOString(),
   },
   {
     key: 'cancellation_policy',
-    title: 'Cancellation and Rescheduling Policy',
-    version: '1.2',
-    content: `Clients may reschedule confirmed assessment appointments up to 48 hours prior to the scheduled start time without penalty. Where our assessors attend a site and access cannot be gained due to no keyholder being present, a re-attendance fee of £150 + VAT applies.`,
+    title: 'Fair Cancellation & Rescheduling Policy',
+    version: '2.0',
+    content: `1. 48-HOUR FREE RESCHEDULING
+We understand that commercial business schedules can change. You can reschedule your site assessment at no additional charge by notifying us via email or telephone at least 48 hours prior to your scheduled booking.
+
+2. CANCELLATIONS WITH NOTICE
+If you need to cancel your assessment booking completely with more than 48 hours' notice, any deposit or prepayment made will be refunded in full within 3-5 working days.
+
+3. LATE CANCELLATION OR REFUSED ACCESS
+If an appointment is cancelled with less than 24 hours' notice, or if our assessor attends your premises at the agreed time and cannot gain safe access due to no keyholder or representative being present, an aborted visit fee of £120 applies to cover assessor travel and allocated inspection time.`,
     updatedAt: new Date().toISOString(),
   },
   {
     key: 'complaints_procedure',
-    title: 'Complaints Procedure',
-    version: '1.1',
-    content: `We are committed to delivering the highest technical standard in fire risk assessment. If you have any dissatisfaction with our service, report or findings, please submit written details to compliance@apexfireuk.co.uk within 14 calendar days. A senior assessor will review and respond formally within 5 working days.`,
+    title: 'Client Satisfaction & Formal Complaints Procedure',
+    version: '2.0',
+    content: `Aurelius Commercial Fire Safety is committed to the highest standards of professional integrity and technical competence.
+
+1. INFORMAL RESOLUTION
+If you have any questions, clarifications, or feedback regarding your fire risk assessment or prioritized action items, please contact Charlie Hughes directly at charlie.a.s.hughes@gmail.com or 020 8050 4912. Most matters can be resolved immediately.
+
+2. FORMAL COMPLAINT PROCESS
+If you wish to register a formal complaint:
+- Step 1: Submit your complaint in writing to charlie.a.s.hughes@gmail.com stating the premises address, report reference number, and specific details of your concern.
+- Step 2: An acknowledgment will be issued within 24 hours of receipt.
+- Step 3: A comprehensive written response, including re-review of technical findings or site photographs, will be delivered within 5 working days.`,
     updatedAt: new Date().toISOString(),
   },
   {
     key: 'document_retention',
-    title: 'Document Retention Policy',
-    version: '1.0',
-    content: `All client records, fire risk assessment reports, evidence photographs, and action tracking items are archived securely and retained for 7 years following assessment completion in accordance with UK professional indemnity guidelines.`,
+    title: 'Statutory Document Retention & Audit Policy',
+    version: '2.0',
+    content: `1. 7-YEAR STATUTORY RECORD RETENTION
+Under Section 156 of the Building Safety Act 2022 and standard UK Professional Indemnity insurance provisions, all Fire Risk Assessment reports, executive summaries, photographic significant findings, and correspondence are retained in secure encrypted digital storage for a minimum of 7 years.
+
+2. CLIENT ACCESS TO ARCHIVED REPORTS
+Clients can access, view, download, or re-print their completed Fire Risk Assessments at any time via the Aurelius Client Portal.
+
+3. ENFORCEMENT & FIRE AUTHORITY AUDIT TRAIL
+In the event that your local Fire and Rescue Service inspects your premises, Aurelius can provide authenticated digital verification of your assessment records and audit dates upon request.`,
     updatedAt: new Date().toISOString(),
   },
 ];
@@ -317,20 +358,21 @@ const DEFAULT_PRICING_RULES: PricingRule[] = [
 const DEFAULT_USERS: User[] = [
   {
     id: 'usr_admin_1',
-    email: 'admin@ukfiresafety.co.uk',
-    name: 'David Miller (Lead Assessor)',
+    email: 'charlie.a.s.hughes@gmail.com',
+    name: 'Charlie Hughes',
     role: 'OWNER',
-    position: 'Principal Fire Safety Consultant & Assessor',
-    telephone: '020 7946 0852',
+    position: 'Founder & Principal Fire Risk Assessor (NEBOSH)',
+    telephone: '020 8050 4912',
     createdAt: new Date().toISOString(),
   },
   {
-    id: 'usr_assessor_2',
-    email: 'sarah.jenkins@ukfiresafety.co.uk',
-    name: 'Sarah Jenkins (MIFireE)',
-    role: 'ASSESSOR',
-    position: 'Senior Fire Risk Assessor',
-    telephone: '07700 900341',
+    id: 'usr_client_demo',
+    email: 'david@millerbooks.co.uk',
+    name: 'David Miller',
+    role: 'CLIENT',
+    position: 'Business Owner & Responsible Person',
+    organisationName: 'Miller Books Ltd',
+    telephone: '020 7946 0123',
     createdAt: new Date().toISOString(),
   },
 ];

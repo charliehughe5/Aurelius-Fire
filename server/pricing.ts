@@ -206,25 +206,27 @@ export function calculateQuote(input: PriceCalculationInput): QuoteCalculationRe
   }
 
   const netAmount = items.reduce((sum, item) => sum + item.total, 0);
-  const vatRate = settings.vatRegistered ? settings.vatRatePercent / 100 : 0;
-  const vatAmount = Math.round(netAmount * vatRate * 100) / 100;
-  const totalAmount = Math.round((netAmount + vatAmount) * 100) / 100;
+  // Aurelius operates on flat, transparent commercial pricing with no VAT
+  const vatRate = 0;
+  const vatAmount = 0;
+  const totalAmount = netAmount;
 
   const assumptions = [
-    'Assessment is non-destructive and covers all accessible common areas, escape corridors, risers, and plant rooms.',
-    'A keyholder or premises representative will be on site to provide unhindered access to all required compartments.',
+    'Assessment is a non-destructive visual evaluation of all accessible commercial areas, escape corridors, and plant rooms.',
+    'A keyholder or premises representative will be on site to provide unhindered access to all required areas.',
     'Access to available fire documentation (alarm test logbooks, emergency lighting logs, EICR) will be facilitated.',
-    'Accredited assessor registered with the Institute of Fire Engineers (IFE) or Nationally Accredited Fire Risk Assessors Register (NAFRAR).',
+    'Conducted strictly to PAS 79-1:2020 standards and the Regulatory Reform (Fire Safety) Order 2005.',
   ];
 
   const exclusions = [
-    'Destructive opening up of fire dampers, cavities, or concealed service risers.',
-    'Specialist intrusive DSEAR (Dangerous Substances and Explosive Atmospheres) hazardous zoning.',
-    'Commissioning or physical testing of fire alarm sound pressure levels or flow rates.',
+    'Premises with sleeping accommodation (residential flats, HMOs, hotels, care homes, or overnight accommodation).',
+    'Intrusive destructive structural sampling or demolition of building fabric.',
+    'Specialist intrusive DSEAR (Dangerous Substances and Explosive Atmospheres) zoning.',
+    'Physical servicing or testing of fire alarms, emergency lights, or fire extinguishers (records and equipment visually audited).',
   ];
 
   const termsSummary =
-    'Quote valid for 30 calendar days. Subject to assessor site confirmation. The Responsible Person (or Dutyholder in Scotland) retains statutory responsibility under the Regulatory Reform (Fire Safety) Order 2005 / Fire (Scotland) Act 2005.';
+    'Aurelius fixed commercial quote valid for 30 calendar days. Flat fee with no VAT. Conducted by NEBOSH-certified assessor Charlie Hughes in accordance with PAS 79-1:2020 and the Regulatory Reform (Fire Safety) Order 2005.';
 
   return {
     items,

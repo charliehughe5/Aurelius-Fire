@@ -39,7 +39,7 @@ import {
 const AdminAppContent: React.FC = () => {
   const { currentRole, setCurrentRole } = useAuth();
   const [adminTab, setAdminTab] = useState<string>('dashboard');
-  const [publicTab, setPublicTab] = useState<'home' | 'quote' | 'about' | 'services'>('home');
+  const [publicTab, setPublicTab] = useState<'home' | 'quote' | 'about' | 'services' | 'coverage'>('home');
   const [policyModalOpen, setPolicyModalOpen] = useState(false);
   const [policyModalKey, setPolicyModalKey] = useState<string | undefined>(undefined);
 
@@ -89,11 +89,13 @@ const AdminAppContent: React.FC = () => {
             {publicTab === 'about' && (
               <AboutCharlie
                 onGetQuoteClick={() => setPublicTab('quote')}
+                onOpenPolicy={openPolicy}
               />
             )}
-            {publicTab === 'services' && (
+            {(publicTab === 'services' || publicTab === 'coverage') && (
               <CommercialServices
                 onGetQuoteClick={() => setPublicTab('quote')}
+                onOpenPolicy={openPolicy}
               />
             )}
           </>
@@ -150,7 +152,7 @@ const AdminAppContent: React.FC = () => {
       <PoliciesModal
         isOpen={policyModalOpen}
         onClose={() => setPolicyModalOpen(false)}
-        initialPolicyKey={policyModalKey}
+        initialKey={policyModalKey}
       />
     </div>
   );
