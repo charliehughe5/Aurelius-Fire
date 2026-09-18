@@ -63,6 +63,12 @@ export const ActionManagement: React.FC = () => {
     api.getPremises().then(setPremisesList);
   }, []);
 
+  useEffect(() => {
+    if (!formClientId && allClients.length > 0) {
+      setFormClientId(allClients[0].id);
+    }
+  }, [allClients, formClientId]);
+
   const loadActions = async () => {
     const list = await api.getActions();
     setActions(list);
@@ -156,7 +162,7 @@ export const ActionManagement: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center space-x-1 overflow-x-auto w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-1 w-full sm:w-auto">
           {['ALL', 'HIGH', 'MEDIUM', 'LOW'].map((st) => (
             <button
               key={st}

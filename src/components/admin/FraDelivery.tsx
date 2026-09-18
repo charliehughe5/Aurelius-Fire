@@ -29,7 +29,7 @@ export const FraDelivery: React.FC = () => {
   // Upload Form
   const [formClientId, setFormClientId] = useState(allClients[0]?.id || '');
   const [formPremisesId, setFormPremisesId] = useState('');
-  const [assessorName, setAssessorName] = useState('David Miller (MIFireE)');
+  const [assessorName, setAssessorName] = useState('Charlie Hughes (Principal Assessor, GIFireE)');
   const [assessmentDate, setAssessmentDate] = useState(new Date().toISOString().split('T')[0]);
   const [reviewTrigger, setReviewTrigger] = useState(
     'Annual review (12 months) or following material alteration'
@@ -48,6 +48,12 @@ export const FraDelivery: React.FC = () => {
     loadFras();
     api.getPremises().then(setPremisesList);
   }, []);
+
+  useEffect(() => {
+    if (!formClientId && allClients.length > 0) {
+      setFormClientId(allClients[0].id);
+    }
+  }, [allClients, formClientId]);
 
   const loadFras = async () => {
     const list = await api.getFras();

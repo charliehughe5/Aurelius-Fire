@@ -27,7 +27,10 @@ export const AboutCharlie: React.FC<AboutCharlieProps> = ({ onGetQuoteClick, onO
   return (
     <div className="space-y-16 py-6 selection:bg-slate-900 selection:text-white">
       {/* 1. APPLE-STYLE HERO PROFILE CARD */}
-      <section className="relative overflow-hidden rounded-3xl bg-slate-950 text-white p-8 sm:p-14 border border-slate-800 shadow-2xl">
+      <section
+        className="relative overflow-hidden rounded-3xl bg-slate-950 text-white p-8 sm:p-14 border border-slate-800 shadow-2xl"
+        style={{ backgroundColor: '#020617' }}
+      >
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -312,7 +315,10 @@ export const AboutCharlie: React.FC<AboutCharlieProps> = ({ onGetQuoteClick, onO
       </section>
 
       {/* 4. BOTTOM CTA BANNER */}
-      <div className="bg-slate-950 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div
+        className="bg-slate-950 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6"
+        style={{ backgroundColor: '#020617' }}
+      >
         <div className="space-y-1 text-center sm:text-left">
           <h3 className="text-xl font-bold text-white tracking-tight">Ready for a Fixed Commercial Quote?</h3>
           <p className="text-slate-400 text-xs sm:text-sm">

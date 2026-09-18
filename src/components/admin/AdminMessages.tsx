@@ -18,6 +18,12 @@ export const AdminMessages: React.FC = () => {
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
+    if (!selectedClient && allClients.length > 0) {
+      setSelectedClient(allClients[0]);
+    }
+  }, [allClients, selectedClient]);
+
+  useEffect(() => {
     if (selectedClient) {
       loadMessages(selectedClient.id);
     }

@@ -104,7 +104,7 @@ const AdminAppContent: React.FC = () => {
         {currentRole === 'ADMIN' && (
           <div className="space-y-6">
             {/* Admin Subnav */}
-            <div className="bg-white rounded-xl border border-slate-200 p-1.5 shadow-2xs overflow-x-auto flex items-center space-x-1">
+            <div className="bg-white rounded-xl border border-slate-200 p-2 shadow-2xs flex flex-wrap items-center gap-1.5 max-w-full">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = adminTab === item.id;
@@ -112,13 +112,13 @@ const AdminAppContent: React.FC = () => {
                   <button
                     key={item.id}
                     onClick={() => setAdminTab(item.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition flex items-center space-x-1.5 ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center space-x-1.5 ${
                       isActive
                         ? 'bg-slate-900 text-white shadow-xs'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        : 'text-slate-700 hover:text-slate-950 hover:bg-slate-100'
                     }`}
                   >
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
                     <span>{item.label}</span>
                   </button>
                 );

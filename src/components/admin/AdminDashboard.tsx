@@ -12,6 +12,10 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
+  ShieldCheck,
+  Check,
+  ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -46,7 +50,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
     );
   }
 
-  const { stats, recentEnquiries, pendingQuotes, upcomingAppointments, highPriorityActions } = report;
+  const stats = {
+    totalClients: report?.stats?.totalClients ?? report?.totalClients ?? 0,
+    totalPremises: report?.stats?.totalPremises ?? report?.totalPremises ?? 0,
+    activeQuotes: report?.stats?.activeQuotes ?? report?.quotesAwaitingResponse ?? 0,
+    paidRevenue: report?.stats?.paidRevenue ?? report?.paymentsReceivedTotal ?? 0,
+    pendingInvoicesAmount: report?.stats?.pendingInvoicesAmount ?? report?.outstandingInvoicesTotal ?? 0,
+    openActions: report?.stats?.openActions ?? report?.overdueActionsCount ?? 0,
+    overdueActions: report?.stats?.overdueActions ?? report?.overdueActionsCount ?? 0,
+  };
+  const recentEnquiries = report?.recentEnquiries || [];
+  const pendingQuotes = report?.pendingQuotes || [];
+  const upcomingAppointments = report?.upcomingAppointments || [];
+  const highPriorityActions = report?.highPriorityActions || [];
 
   return (
     <div className="space-y-6">
@@ -71,6 +87,155 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) =>
           >
             <span>Deliver FRA Report</span>
           </button>
+        </div>
+      </div>
+
+      {/* GUIDED WORKFLOW: 5 STEPS TO MANAGE ASSESSMENTS */}
+      <div className="bg-white rounded-2xl border border-blue-200/80 p-5 shadow-xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <div className="flex items-center space-x-2">
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold text-[11px] uppercase tracking-wider">
+                Assessor Guided Flow
+              </span>
+              <span className="text-slate-400 text-xs">•</span>
+              <span className="text-slate-600 text-xs font-medium">Recommended Workflow in 5 Simple Steps</span>
+            </div>
+            <h2 className="text-sm font-bold text-slate-900 mt-1">
+              Start Here: How to Manage Clients & Fire Risk Assessments in FireVault
+            </h2>
+          </div>
+          <span className="text-xs text-slate-500">
+            Click any step below to jump directly into that operation
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          {/* Step 1: Add Client */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-400 hover:bg-blue-50/30 transition">
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                <span>STEP 1</span>
+                {stats.totalClients > 0 ? (
+                  <span className="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                    {stats.totalClients} Registered
+                  </span>
+                ) : (
+                  <span className="text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                    Action Needed
+                  </span>
+                )}
+              </div>
+              <div className="font-bold text-slate-900 text-xs">Add Client Organisation</div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Record the customer company and their designated Responsible Person contact.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('clients')}
+              className="w-full py-1.5 px-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center space-x-1"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>1. Add Client</span>
+            </button>
+          </div>
+
+          {/* Step 2: Add Premises */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-400 hover:bg-blue-50/30 transition">
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                <span>STEP 2</span>
+                <span className="text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                  {stats.totalPremises} Sites
+                </span>
+              </div>
+              <div className="font-bold text-slate-900 text-xs">Add Premises / Sites</div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Register property addresses, floor area, storeys, occupancy & sleeping risks.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('premises')}
+              className="w-full py-1.5 px-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center space-x-1"
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>2. Add Premises</span>
+            </button>
+          </div>
+
+          {/* Step 3: Issue Quote */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-400 hover:bg-blue-50/30 transition">
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                <span>STEP 3</span>
+                <span className="text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                  {stats.activeQuotes} Quotes
+                </span>
+              </div>
+              <div className="font-bold text-slate-900 text-xs">Issue Assessment Quote</div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Price the inspection according to risk scale and email formal fee proposal.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('quotes')}
+              className="w-full py-1.5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center space-x-1"
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>3. Create Quote</span>
+            </button>
+          </div>
+
+          {/* Step 4: Deliver FRA */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-400 hover:bg-blue-50/30 transition">
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                <span>STEP 4</span>
+                <span className="text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                  PAS 79
+                </span>
+              </div>
+              <div className="font-bold text-slate-900 text-xs">Conduct & Deliver FRA</div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Perform site survey, log hazards, calculate matrix risk and issue statutory PDF.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('fras')}
+              className="w-full py-1.5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center space-x-1"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>4. Deliver FRA</span>
+            </button>
+          </div>
+
+          {/* Step 5: Remedial Actions */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-400 hover:bg-blue-50/30 transition">
+            <div>
+              <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                <span>STEP 5</span>
+                <span className={`px-1.5 py-0.5 rounded font-semibold text-[10px] ${stats.openActions > 0 ? 'text-rose-700 bg-rose-100' : 'text-emerald-700 bg-emerald-100'}`}>
+                  {stats.openActions > 0 ? `${stats.openActions} Pending` : 'All Clear'}
+                </span>
+              </div>
+              <div className="font-bold text-slate-900 text-xs">Verify Remedial Actions</div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Review dutyholder repair photos and certify statutory compliance sign-off.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('actions')}
+              className="w-full py-1.5 px-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center space-x-1"
+            >
+              <CheckCircle className="w-3.5 h-3.5" />
+              <span>5. Sign Off Actions</span>
+            </button>
+          </div>
         </div>
       </div>
 

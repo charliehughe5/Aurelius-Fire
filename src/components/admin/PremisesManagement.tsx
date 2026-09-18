@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { StatusBadge } from '../common/StatusBadge';
 import { EmptyState } from '../common/EmptyState';
 import { ConfirmDialog } from '../common/ConfirmDialog';
+import { DirectEmailModal } from '../common/DirectEmailModal';
 import {
   Building2,
   Search,
@@ -19,6 +20,7 @@ import {
   X,
   FileCheck,
   CheckSquare,
+  Mail,
 } from 'lucide-react';
 
 const PREMISES_TYPES: PremisesType[] = [
@@ -41,6 +43,7 @@ export const PremisesManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClientId, setSelectedClientId] = useState<string>('ALL');
   const [selectedPremises, setSelectedPremises] = useState<Premises | null>(null);
+  const [emailModalPremises, setEmailModalPremises] = useState<Premises | null>(null);
 
   // Readiness modal
   const [readinessData, setReadinessData] = useState<{
@@ -51,7 +54,15 @@ export const PremisesManagement: React.FC = () => {
 
   // Add / Duplicate modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [premisesToArchive, setPremisesToArchive] = useState<Premises | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
 
   const [formData, setFormData] = useState({
     clientId: allClients[0]?.id || '',
@@ -70,6 +81,12 @@ export const PremisesManagement: React.FC = () => {
     contactOnSitePhone: '',
     accessInstructions: '',
   });
+
+  useEffect(() => {
+    if (!formData.clientId && allClients.length > 0) {
+      setFormData((prev) => ({ ...prev, clientId: allClients[0].id }));
+    }
+  }, [allClients, formData.clientId]);
 
   useEffect(() => {
     loadPremises();
@@ -93,12 +110,44 @@ export const PremisesManagement: React.FC = () => {
 
   const handleCreatePremises = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setFormError(null);
     try {
-      await api.createPremises(formData);
+      const activeClientId = formData.clientId || allClients[0]?.id;
+      if (!activeClientId) {
+        setFormError('A client organisation must be selected or created first.');
+        setIsSubmitting(false);
+        return;
+      }
+      const created = await api.createPremises({
+        ...formData,
+        clientId: activeClientId,
+      });
       setIsAddModalOpen(false);
+      setFormData({
+        clientId: allClients[0]?.id || '',
+        premisesName: '',
+        addressLine1: '',
+        city: 'London',
+        postcode: '',
+        jurisdiction: 'England & Wales (RRFSO 2005)' as any,
+        premisesType: 'Offices & Commercial' as PremisesType,
+        numberOfFloors: 2,
+        approxFloorAreaSqM: 250,
+        maxOccupancy: 25,
+        sleepingAccommodation: false,
+        publicAccess: false,
+        contactOnSite: '',
+        contactOnSitePhone: '',
+        accessInstructions: '',
+      });
       await loadPremises();
-    } catch (err) {
+      showToast(`Premises "${created.premisesName}" created successfully!`);
+    } catch (err: any) {
       console.error('Failed to create premises:', err);
+      setFormError(err.message || 'Failed to create premises. Please verify the fields.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -293,6 +342,14 @@ export const PremisesManagement: React.FC = () => {
 
                       <td className="py-3.5 px-4 text-right space-x-2 whitespace-nowrap">
                         <button
+                          onClick={() => setEmailModalPremises(p)}
+                          className="px-2 py-1 text-blue-700 hover:bg-blue-50 rounded text-xs font-medium border border-blue-200 transition inline-flex items-center space-x-1"
+                          title="Direct Email about this premises"
+                        >
+                          <Mail className="w-3 h-3" />
+                          <span>Email</span>
+                        </button>
+                        <button
                           onClick={() => handleOpenReadiness(p)}
                           className="px-2 py-1 text-slate-700 hover:bg-slate-100 rounded text-xs font-medium border border-slate-200 transition"
                         >
@@ -416,6 +473,19 @@ export const PremisesManagement: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {formError && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                <span>{formError}</span>
+              </div>
+            )}
+
+            {allClients.length === 0 && (
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-lg">
+                <strong>Notice:</strong> No client organisations found. Please create a client organisation first before adding premises.
+              </div>
+            )}
 
             <div className="space-y-3 text-xs">
               <div>
@@ -596,12 +666,21 @@ export const PremisesManagement: React.FC = () => {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg shadow-xs"
+                disabled={isSubmitting}
+                className="px-4 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-50 rounded-lg shadow-xs flex items-center space-x-1"
               >
-                Save Premises
+                <span>{isSubmitting ? 'Saving Premises...' : 'Save Premises'}</span>
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 text-xs border border-slate-700 animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
         </div>
       )}
 
@@ -615,6 +694,25 @@ export const PremisesManagement: React.FC = () => {
         onConfirm={handleArchiveConfirm}
         onCancel={() => setPremisesToArchive(null)}
       />
+
+      {emailModalPremises && (
+        <DirectEmailModal
+          isOpen={!!emailModalPremises}
+          onClose={() => setEmailModalPremises(null)}
+          defaultRecipientEmail={
+            allClients.find((c) => c.id === emailModalPremises.clientId)?.contactEmail || ''
+          }
+          defaultRecipientName={
+            allClients.find((c) => c.id === emailModalPremises.clientId)?.contactName ||
+            emailModalPremises.premisesName
+          }
+          clientId={emailModalPremises.clientId}
+          premisesId={emailModalPremises.id}
+          defaultSubject={`Premises Information & Access • ${emailModalPremises.premisesName}`}
+          defaultMessage={`Dear Dutyholder,\n\nI am contacting you regarding your site "${emailModalPremises.premisesName}" (${emailModalPremises.addressLine1}, ${emailModalPremises.postcode}).\n\nPlease ensure full access is available to all plant rooms, boiler areas, and electrical cupboards for the assessment.\n\nKind regards,\nCharlie Hughes\nAurelius Commercial Fire Safety`}
+          onSuccess={() => setEmailModalPremises(null)}
+        />
+      )}
     </div>
   );
 };

@@ -34,13 +34,44 @@ export const PortfolioView: React.FC = () => {
     }
   };
 
-  const filteredMatrix = matrix.filter((item) => {
+  const normalizedMatrix = matrix.map((item) => {
+    const premises = item.premises || {
+      id: item.premisesId || `prm_${Math.random()}`,
+      premisesName: item.premisesName || 'Commercial Premises',
+      addressLine1: item.premisesName || 'Premises Address',
+      city: 'London',
+      postcode: item.postcode || 'London',
+      premisesType: item.premisesType || 'Commercial',
+      status: item.status || 'Active',
+      preAssessmentReadinessStatus: 'READY',
+    };
+    const client = item.client || {
+      companyName: item.clientName || 'Commercial Client',
+      status: item.clientStatus || 'Active',
+    };
+    const latestFra = item.latestFra || (item.fraReference && item.fraReference !== '—' ? {
+      reportNumber: item.fraReference,
+      recommendedReviewDate: item.reviewDate || '12 Months',
+      overallRiskRating: 'Moderate',
+    } : null);
+
+    return {
+      ...item,
+      premises,
+      client,
+      latestFra,
+      activeActionsCount: item.activeActionsCount ?? item.openActionsCount ?? 0,
+      documentsCount: item.documentsCount ?? 0,
+    };
+  });
+
+  const filteredMatrix = normalizedMatrix.filter((item) => {
     const s = searchTerm.toLowerCase();
     return (
-      item.premises.premisesName.toLowerCase().includes(s) ||
-      item.premises.addressLine1.toLowerCase().includes(s) ||
-      item.premises.postcode.toLowerCase().includes(s) ||
-      item.client?.companyName.toLowerCase().includes(s)
+      (item.premises?.premisesName || '').toLowerCase().includes(s) ||
+      (item.premises?.addressLine1 || '').toLowerCase().includes(s) ||
+      (item.premises?.postcode || '').toLowerCase().includes(s) ||
+      (item.client?.companyName || '').toLowerCase().includes(s)
     );
   });
 

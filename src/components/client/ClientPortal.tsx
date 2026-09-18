@@ -76,6 +76,66 @@ export const ClientPortal: React.FC = () => {
   const [checklistEscort, setChecklistEscort] = useState(true);
   const [checklistNotes, setChecklistNotes] = useState('');
 
+  // Add Premises State
+  const [isAddPremisesModalOpen, setIsAddPremisesModalOpen] = useState(false);
+  const [isSubmittingPremises, setIsSubmittingPremises] = useState(false);
+  const [premisesFormError, setPremisesFormError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [premisesFormData, setPremisesFormData] = useState({
+    premisesName: '',
+    addressLine1: '',
+    city: 'London',
+    postcode: '',
+    premisesType: 'Offices & Commercial' as any,
+    approxFloorAreaSqM: 150,
+    numberOfFloors: 2,
+    sleepingAccommodation: false,
+    publicAccess: false,
+    contactOnSite: '',
+    contactOnSitePhone: '',
+    accessInstructions: '',
+  });
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleCreateClientPremises = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentClient) return;
+    setIsSubmittingPremises(true);
+    setPremisesFormError(null);
+    try {
+      const created = await api.createPremises({
+        ...premisesFormData,
+        clientId: currentClient.id,
+      });
+      setIsAddPremisesModalOpen(false);
+      setPremisesFormData({
+        premisesName: '',
+        addressLine1: '',
+        city: 'London',
+        postcode: '',
+        premisesType: 'Offices & Commercial' as any,
+        approxFloorAreaSqM: 150,
+        numberOfFloors: 2,
+        sleepingAccommodation: false,
+        publicAccess: false,
+        contactOnSite: '',
+        contactOnSitePhone: '',
+        accessInstructions: '',
+      });
+      await loadAllClientData(currentClient.id);
+      showToast(`Premises "${created.premisesName}" successfully registered!`);
+    } catch (err: any) {
+      console.error('Failed to create premises:', err);
+      setPremisesFormError(err.message || 'Failed to register premises. Please check fields.');
+    } finally {
+      setIsSubmittingPremises(false);
+    }
+  };
+
   useEffect(() => {
     if (currentClient) {
       loadAllClientData(currentClient.id);
@@ -127,12 +187,22 @@ export const ClientPortal: React.FC = () => {
     }
   };
 
-  // Action: Pay Invoice via Stripe
+  // Action: Pay Invoice via Stripe (Part 15)
   const handlePayInvoice = async (invoice: Invoice) => {
     try {
-      await api.confirmPayment({
-        paymentIntentId: `pi_stripe_${Date.now()}`,
+      const intent = await api.createPaymentIntent({
+        amountPence: Math.round(invoice.totalAmount * 100),
         clientId: currentClient.id,
+        organisationId: currentClient.id,
+        invoiceId: invoice.id,
+        quoteId: invoice.quoteId,
+        description: `Payment for Invoice ${invoice.invoiceNumber}`,
+      });
+
+      await api.confirmPayment({
+        paymentIntentId: intent.paymentIntentId || `pi_stripe_${Date.now()}`,
+        clientId: currentClient.id,
+        organisationId: currentClient.id,
         amount: invoice.totalAmount,
         invoiceId: invoice.id,
         quoteId: invoice.quoteId,
@@ -143,6 +213,7 @@ export const ClientPortal: React.FC = () => {
       alert('Payment of £' + invoice.totalAmount.toFixed(2) + ' processed successfully via Stripe.');
     } catch (err) {
       console.error('Payment failed:', err);
+      alert('Payment processing encountered an issue. Please try again.');
     }
   };
 
@@ -264,16 +335,152 @@ export const ClientPortal: React.FC = () => {
             </p>
           </div>
 
-          <button
-            onClick={() => {
-              setBookingPremisesId(clientPremises[0]?.id || '');
-              setIsBookingModalOpen(true);
-            }}
-            className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-lg shadow-xs transition flex items-center space-x-1.5 self-start"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Request Site Assessment</span>
-          </button>
+          <div className="flex items-center space-x-2 self-start">
+            <button
+              onClick={() => setIsAddPremisesModalOpen(true)}
+              className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg shadow-xs transition flex items-center space-x-1.5"
+            >
+              <Building2 className="w-4 h-4" />
+              <span>+ Add Premises</span>
+            </button>
+            <button
+              onClick={() => {
+                setBookingPremisesId(clientPremises[0]?.id || '');
+                setIsBookingModalOpen(true);
+              }}
+              className="px-3.5 py-2 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-lg shadow-xs transition flex items-center space-x-1.5"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Request Visit</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4-STEP CLIENT COMPLIANCE JOURNEY */}
+        <div className="mt-6 pt-6 border-t border-slate-100">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700">
+                Guided Step-by-Step Flow
+              </span>
+              <h2 className="text-sm font-bold text-slate-900">
+                How to Complete Your Fire Safety Compliance
+              </h2>
+            </div>
+            <span className="text-xs text-slate-500">
+              Sites Registered: <strong className="text-slate-800">{clientPremises.length}</strong> • Actions Pending: <strong className="text-slate-800">{openActions}</strong>
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+            {/* Step 1 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-300 transition">
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                  <span>STEP 1</span>
+                  {clientPremises.length > 0 ? (
+                    <span className="text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                      {clientPremises.length} Added
+                    </span>
+                  ) : (
+                    <span className="text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                      Required
+                    </span>
+                  )}
+                </div>
+                <div className="font-bold text-slate-900 text-xs">Register Premises</div>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Add your commercial, residential or retail properties requiring statutory assessment.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddPremisesModalOpen(true)}
+                className="w-full py-1.5 px-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center justify-center space-x-1"
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>+ Add Premises</span>
+              </button>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-300 transition">
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                  <span>STEP 2</span>
+                  <span className="text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                    Readiness
+                  </span>
+                </div>
+                <div className="font-bold text-slate-900 text-xs">Pre-Assessment Checklist</div>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Verify alarm test logbooks, emergency lighting records, and keys before the assessor arrives.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('premises');
+                  if (clientPremises.length > 0) {
+                    setReadinessPremises(clientPremises[0]);
+                    setChecklistNotes(clientPremises[0].accessArrangements || '');
+                  }
+                }}
+                className="w-full py-1.5 px-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1"
+              >
+                <FileCheck className="w-3.5 h-3.5" />
+                <span>Checklist & Escort</span>
+              </button>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-300 transition">
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                  <span>STEP 3</span>
+                  <span className="text-slate-600 bg-slate-200 px-1.5 py-0.5 rounded font-semibold text-[10px]">
+                    {clientQuotes.length} Quotes
+                  </span>
+                </div>
+                <div className="font-bold text-slate-900 text-xs">Quotes & Bookings</div>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Review fixed fee proposals, book visit dates, and access VAT invoices for accounting.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab('quotes')}
+                className="w-full py-1.5 px-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>View Quotations</span>
+              </button>
+            </div>
+
+            {/* Step 4 */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between space-y-2 hover:border-blue-300 transition">
+              <div>
+                <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1">
+                  <span>STEP 4</span>
+                  <span className={`px-1.5 py-0.5 rounded font-semibold text-[10px] ${openActions > 0 ? 'text-rose-700 bg-rose-100' : 'text-emerald-700 bg-emerald-100'}`}>
+                    {openActions > 0 ? `${openActions} Open` : 'Compliant'}
+                  </span>
+                </div>
+                <div className="font-bold text-slate-900 text-xs">Remedial Evidence</div>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Upload contractor invoices and photos of repaired fire doors or signage to close actions.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveTab('actions')}
+                className="w-full py-1.5 px-2 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center space-x-1"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Action Tracker</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Navigation Tabs */}
@@ -415,8 +622,37 @@ export const ClientPortal: React.FC = () => {
       {activeTab === 'premises' && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-base font-bold text-slate-900">Registered Premises & Readiness</h2>
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Registered Premises & Readiness</h2>
+              <p className="text-xs text-slate-500">Manage all business locations under your statutory duty</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsAddPremisesModalOpen(true)}
+              className="px-3.5 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-xs transition flex items-center space-x-1.5"
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>+ Add Premises</span>
+            </button>
           </div>
+
+          {clientPremises.length === 0 && (
+            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-3">
+              <Building2 className="w-10 h-10 text-slate-300 mx-auto" />
+              <h3 className="text-sm font-bold text-slate-800">No Premises Registered Yet</h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                Get started by adding your first building, commercial unit, or property portfolio to arrange statutory fire risk assessments.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsAddPremisesModalOpen(true)}
+                className="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-xs font-semibold shadow-xs inline-flex items-center space-x-1"
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>+ Register Your First Premises</span>
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {clientPremises.map((p) => (
@@ -503,8 +739,7 @@ export const ClientPortal: React.FC = () => {
                   <tr>
                     <th className="py-3 px-4">Quote Number</th>
                     <th className="py-3 px-4">Premises</th>
-                    <th className="py-3 px-4">Net / VAT</th>
-                    <th className="py-3 px-4">Total Amount</th>
+                    <th className="py-3 px-4">Total (Zero VAT)</th>
                     <th className="py-3 px-4">Valid Until</th>
                     <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4 text-right">Action</th>
@@ -515,11 +750,9 @@ export const ClientPortal: React.FC = () => {
                     <tr key={q.id} className="hover:bg-slate-50/80">
                       <td className="py-3 px-4 font-mono font-semibold">{q.quoteNumber}</td>
                       <td className="py-3 px-4">{q.premisesName}</td>
-                      <td className="py-3 px-4 text-slate-500">
-                        £{q.netAmount.toFixed(2)} + £{q.vatAmount.toFixed(2)}
-                      </td>
                       <td className="py-3 px-4 font-bold text-slate-900">
-                        £{q.totalAmount.toFixed(2)}
+                        £{q.totalAmount.toFixed(2)}{' '}
+                        <span className="text-[10px] font-normal text-emerald-600 block sm:inline">(Zero VAT)</span>
                       </td>
                       <td className="py-3 px-4 text-slate-500">{q.validUntil}</td>
                       <td className="py-3 px-4">
@@ -545,7 +778,7 @@ export const ClientPortal: React.FC = () => {
       {/* TAB 4: INVOICES & STRIPE PAYMENTS */}
       {activeTab === 'invoices' && (
         <div className="space-y-4">
-          <h2 className="text-base font-bold text-slate-900">VAT Invoices & Stripe Payments</h2>
+          <h2 className="text-base font-bold text-slate-900">Commercial Invoices & Stripe Payments</h2>
           {clientInvoices.length === 0 ? (
             <EmptyState
               title="No invoices found"
@@ -854,7 +1087,7 @@ export const ClientPortal: React.FC = () => {
         <div className="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden h-[500px] flex flex-col">
           <div className="p-4 border-b border-slate-200 bg-slate-50">
             <h3 className="text-xs font-bold text-slate-900">
-              Assessor Dialogue • Apex Fire Safety Operations
+              Assessor Dialogue • Aurelius Commercial Fire Safety Operations (Charlie Hughes)
             </h3>
             <p className="text-[11px] text-slate-500">
               Direct assistance with site access, document submissions, and fire safety directives
@@ -951,16 +1184,16 @@ export const ClientPortal: React.FC = () => {
 
               <div className="p-3 bg-slate-50 rounded-xl space-y-1 text-right text-xs">
                 <div>Subtotal: £{selectedQuote.netAmount.toFixed(2)}</div>
-                <div>VAT (20%): £{selectedQuote.vatAmount.toFixed(2)}</div>
+                <div className="text-emerald-700 font-medium">VAT (0%): £0.00 (Zero VAT / Non-VAT Registered)</div>
                 <div className="font-bold text-sm text-slate-900">
-                  Total: £{selectedQuote.totalAmount.toFixed(2)}
+                  Total Due: £{selectedQuote.totalAmount.toFixed(2)}
                 </div>
               </div>
 
               <div className="p-3 bg-blue-50/60 rounded-xl text-[11px] text-blue-900 leading-relaxed border border-blue-200">
                 <span className="font-bold block">Statutory Declaration:</span>
-                By clicking "Accept Quotation", you formally authorise Apex Fire Safety UK to conduct
-                the assessment according to British Standard PAS 79-1:2020. An electronic VAT invoice
+                By clicking "Accept Quotation", you formally authorise Aurelius Commercial Fire Safety to conduct
+                the assessment according to British Standard PAS 79-1:2020. An electronic commercial invoice
                 will be generated.
               </div>
             </div>
@@ -1253,6 +1486,206 @@ export const ClientPortal: React.FC = () => {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Add Premises Modal for Client */}
+      {isAddPremisesModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto">
+          <form
+            onSubmit={handleCreateClientPremises}
+            className="bg-white rounded-xl shadow-xl max-w-xl w-full p-6 border border-slate-200 space-y-4 my-8"
+          >
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-900">Register New Premises</h3>
+                <p className="text-xs text-slate-500">Add a property or commercial unit for fire risk assessment</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddPremisesModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {premisesFormError && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                <span>{premisesFormError}</span>
+              </div>
+            )}
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Premises / Building Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Unit 3, Riverside Retail Park"
+                  value={premisesFormData.premisesName}
+                  onChange={(e) => setPremisesFormData({ ...premisesFormData, premisesName: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Address Line 1</label>
+                  <input
+                    type="text"
+                    placeholder="12 Commercial Way"
+                    value={premisesFormData.addressLine1}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, addressLine1: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Postcode *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="SE1 7PB"
+                    value={premisesFormData.postcode}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, postcode: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800 font-mono"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Town / City</label>
+                  <input
+                    type="text"
+                    placeholder="London"
+                    value={premisesFormData.city}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, city: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Premises Type</label>
+                  <select
+                    value={premisesFormData.premisesType}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, premisesType: e.target.value as any })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  >
+                    <option value="Offices & Commercial">Offices & Commercial</option>
+                    <option value="Shops & Retail">Shops & Retail</option>
+                    <option value="Industrial & Storage">Industrial & Storage</option>
+                    <option value="Sleeping Accommodation">Sleeping Accommodation (HMO/Hotel)</option>
+                    <option value="Residential Care">Residential Care</option>
+                    <option value="Educational Premises">Educational Premises</option>
+                    <option value="Assembly & Recreation">Assembly & Recreation</option>
+                    <option value="Healthcare">Healthcare</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Approx Floor Area (m²)</label>
+                  <input
+                    type="number"
+                    value={premisesFormData.approxFloorAreaSqM}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, approxFloorAreaSqM: Number(e.target.value) })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Number of Storeys</label>
+                  <input
+                    type="number"
+                    value={premisesFormData.numberOfFloors}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, numberOfFloors: Number(e.target.value) })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <label className="flex items-center space-x-2 text-xs text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={premisesFormData.sleepingAccommodation}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, sleepingAccommodation: e.target.checked })}
+                    className="rounded text-blue-700"
+                  />
+                  <span>Sleeping accommodation on site</span>
+                </label>
+                <label className="flex items-center space-x-2 text-xs text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={premisesFormData.publicAccess}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, publicAccess: e.target.checked })}
+                    className="rounded text-blue-700"
+                  />
+                  <span>Open to members of public</span>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">On-Site Contact Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Facilities Lead / Store Mgr"
+                    value={premisesFormData.contactOnSite}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, contactOnSite: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">On-Site Telephone</label>
+                  <input
+                    type="text"
+                    placeholder="07700 900555"
+                    value={premisesFormData.contactOnSitePhone}
+                    onChange={(e) => setPremisesFormData({ ...premisesFormData, contactOnSitePhone: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Access Notes & Keyholder Instructions</label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. Ring buzzer 4B, parking permits at main reception"
+                  value={premisesFormData.accessInstructions}
+                  onChange={(e) => setPremisesFormData({ ...premisesFormData, accessInstructions: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsAddPremisesModalOpen(false)}
+                className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmittingPremises}
+                className="px-4 py-2 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 disabled:opacity-50 rounded-lg shadow-xs flex items-center space-x-1"
+              >
+                <span>{isSubmittingPremises ? 'Registering...' : 'Save & Register Premises'}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-2 text-xs border border-slate-700 animate-fade-in">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>{toastMessage}</span>
         </div>
       )}
     </div>

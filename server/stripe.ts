@@ -26,6 +26,7 @@ export interface CreatePaymentIntentParams {
   amountPence: number;
   currency?: 'gbp';
   clientId: string;
+  organisationId?: string;
   clientName: string;
   clientEmail: string;
   invoiceId?: string;
@@ -52,6 +53,7 @@ export async function createPaymentIntent(params: CreatePaymentIntentParams): Pr
         description: params.description,
         metadata: {
           clientId: params.clientId,
+          organisationId: params.organisationId || '',
           clientName: params.clientName,
           clientEmail: params.clientEmail,
           invoiceId: params.invoiceId || '',
@@ -86,6 +88,7 @@ export async function createPaymentIntent(params: CreatePaymentIntentParams): Pr
 export async function processPaymentSuccess(params: {
   paymentIntentId: string;
   clientId: string;
+  organisationId?: string;
   amount: number;
   quoteId?: string;
   invoiceId?: string;
@@ -93,9 +96,20 @@ export async function processPaymentSuccess(params: {
 }) {
   const now = new Date().toISOString();
 
-  // 1. Record payment in database
+  // Resolve Organisation context
+  const client = db.getClientById(params.clientId);
+  const org = params.organisationId
+    ? db.getOrganisationById(params.organisationId)
+    : db.getOrganisations().find((o) => (client && o.name === client.companyName) || o.id === params.clientId);
+
+  const resolvedOrgId = org?.id || params.organisationId;
+  const resolvedOrgName = org?.name || client?.companyName;
+
+  // 1. Record payment in database with Organisation context
   const paymentRecord = db.createPayment({
     clientId: params.clientId,
+    organisationId: resolvedOrgId,
+    organisationName: resolvedOrgName,
     invoiceId: params.invoiceId,
     quoteId: params.quoteId,
     amount: params.amount,
@@ -105,6 +119,11 @@ export async function processPaymentSuccess(params: {
     paymentMethod: params.paymentMethod || 'card',
     receiptUrl: `/invoices/receipt/${params.paymentIntentId}`,
   });
+
+  // Update Organisation status if appropriate
+  if (org && (org.status === 'Lead' || org.status === 'Enquiry' || org.status === 'Quoted')) {
+    db.updateOrganisation(org.id, { status: 'Active' });
+  }
 
   // 2. Update Invoice if present
   if (params.invoiceId) {
@@ -124,7 +143,6 @@ export async function processPaymentSuccess(params: {
       });
 
       // Update client status to 'Booked' or 'Active Client'
-      const client = db.getClientById(params.clientId);
       if (client && (client.status === 'Awaiting Payment' || client.status === 'Quoted' || client.status === 'Quote Accepted')) {
         db.updateClient(params.clientId, { status: 'Booked' });
       }
@@ -168,7 +186,6 @@ export async function processPaymentSuccess(params: {
   }
 
   // 4. Create in-app notifications
-  const client = db.getClientById(params.clientId);
   const clientName = client ? client.companyName : 'Client';
 
   db.createNotification({

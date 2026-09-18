@@ -18,6 +18,14 @@ import {
   PricingRule,
   BusinessSettings,
   QuoteItem,
+  Organisation,
+  Contact,
+  Invitation,
+  Job,
+  QuestionnaireQuestion,
+  QuestionnaireResponse,
+  Finding,
+  EmailLogRecord,
 } from './types';
 
 class ApiService {
@@ -148,7 +156,7 @@ class ApiService {
     return this.request<Quote>(`/quotes/${id}`);
   }
 
-  public createQuote(data: Partial<Quote>) {
+  public createQuote(data: Partial<Quote> & Record<string, any>) {
     return this.request<Quote>('/quotes', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -163,6 +171,99 @@ class ApiService {
     return this.request<{ success: boolean; quote: Quote; invoice: Invoice }>(`/quotes/${id}/accept`, {
       method: 'POST',
       body: JSON.stringify({ acceptedByName, acceptedByEmail }),
+    });
+  }
+
+  public clientAcceptQuote(
+    id: string,
+    payload: {
+      preferredSlotDate: string;
+      preferredSlotTime: string;
+      preferredSlotNotes?: string;
+      acceptedByName?: string;
+      acceptedByEmail?: string;
+    }
+  ) {
+    return this.request<{ success: boolean; quote: Quote }>(`/quotes/${id}/client-accept`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public assessorConfirmQuote(
+    id: string,
+    payload: {
+      confirmedDate?: string;
+      confirmedTime?: string;
+      assessorNotes?: string;
+    }
+  ) {
+    return this.request<{ success: boolean; quote: Quote; invoice?: Invoice }>(`/quotes/${id}/assessor-confirm`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public assessorCounterQuote(
+    id: string,
+    payload: {
+      proposedDate: string;
+      proposedTime?: string;
+      assessorNotes?: string;
+    }
+  ) {
+    return this.request<{ success: boolean; quote: Quote }>(`/quotes/${id}/assessor-counter`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public assessorDeclineQuote(
+    id: string,
+    payload: {
+      declineReason: string;
+      assessorNotes?: string;
+    }
+  ) {
+    return this.request<{ success: boolean; quote: Quote }>(`/quotes/${id}/assessor-decline`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public signContract(
+    id: string,
+    payload: {
+      signerName: string;
+      signerPosition?: string;
+      signatureData: string;
+    }
+  ) {
+    return this.request<{ success: boolean; quote: Quote }>(`/quotes/${id}/sign-contract`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  public submitPreAssessment(id: string, questionnaireData: Record<string, any>) {
+    return this.request<{ success: boolean; quote: Quote }>(`/quotes/${id}/pre-assessment`, {
+      method: 'POST',
+      body: JSON.stringify({ questionnaireData }),
+    });
+  }
+
+  public sendDirectEmail(payload: {
+    recipientEmail: string;
+    recipientName?: string;
+    subject: string;
+    messageBody: string;
+    clientId?: string;
+    premisesId?: string;
+    quoteId?: string;
+  }) {
+    return this.request<{ success: boolean; message: string; dispatchedAt: string }>('/emails/direct-send', {
+      method: 'POST',
+      body: JSON.stringify(payload),
     });
   }
 
@@ -272,6 +373,7 @@ class ApiService {
   public createPaymentIntent(params: {
     amountPence: number;
     clientId: string;
+    organisationId?: string;
     quoteId?: string;
     invoiceId?: string;
     description?: string;
@@ -285,6 +387,7 @@ class ApiService {
   public confirmPayment(params: {
     paymentIntentId: string;
     clientId: string;
+    organisationId?: string;
     amount: number;
     quoteId?: string;
     invoiceId?: string;
@@ -396,6 +499,30 @@ class ApiService {
     });
   }
 
+  public uploadDocumentVersion(
+    id: string,
+    data: {
+      fileUrl?: string;
+      fileName?: string;
+      versionNotes?: string;
+      issueDate?: string;
+      expiryDate?: string;
+      notes?: string;
+    }
+  ) {
+    return this.request<{ success: boolean; document: DocumentRecord; previousDocument: DocumentRecord }>(
+      `/documents/${id}/version`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  public getDocumentHistory(id: string) {
+    return this.request<DocumentRecord[]>(`/documents/${id}/history`);
+  }
+
   // FRAs
   public getFras(clientId?: string, premisesId?: string) {
     let q = '';
@@ -492,8 +619,9 @@ class ApiService {
     return this.request<any>('/reports/dashboard');
   }
 
-  public getPortfolioReport() {
-    return this.request<any[]>('/reports/portfolio');
+  public async getPortfolioReport() {
+    const res = await this.request<any>('/reports/portfolio');
+    return Array.isArray(res) ? res : (res.portfolio || []);
   }
 
   // Settings & Policies
@@ -532,6 +660,228 @@ class ApiService {
 
   public getAuditLogs() {
     return this.request<AuditLogRecord[]>('/audit');
+  }
+
+  // Organisations (Part 10)
+  public getOrganisations() {
+    return this.request<Organisation[]>('/organisations');
+  }
+
+  public getOrganisation(id: string) {
+    return this.request<Organisation>(`/organisations/${id}`);
+  }
+
+  public createOrganisation(data: Partial<Organisation>) {
+    return this.request<Organisation>('/organisations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public updateOrganisation(id: string, data: Partial<Organisation>) {
+    return this.request<Organisation>(`/organisations/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public deleteOrganisation(id: string) {
+    return this.request<{ success: boolean }>(`/organisations/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Contacts (Part 11)
+  public getContacts(organisationId?: string) {
+    const q = organisationId ? `?organisationId=${encodeURIComponent(organisationId)}` : '';
+    return this.request<Contact[]>(`/contacts${q}`);
+  }
+
+  public getContact(id: string) {
+    return this.request<Contact>(`/contacts/${id}`);
+  }
+
+  public createContact(data: Partial<Contact>) {
+    return this.request<Contact>('/contacts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public updateContact(id: string, data: Partial<Contact>) {
+    return this.request<Contact>(`/contacts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public deleteContact(id: string) {
+    return this.request<{ success: boolean }>(`/contacts/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Invitations (Part 12)
+  public getInvitations(organisationId?: string) {
+    const q = organisationId ? `?organisationId=${encodeURIComponent(organisationId)}` : '';
+    return this.request<Invitation[]>(`/invitations${q}`);
+  }
+
+  public createInvitation(data: {
+    email: string;
+    name?: string;
+    recipientName?: string;
+    role: string;
+    organisationId?: string;
+    organisationName?: string;
+  }) {
+    return this.request<Invitation>('/invitations', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public resendInvitation(id: string) {
+    return this.request<Invitation>(`/invitations/${id}/resend`, {
+      method: 'POST',
+    });
+  }
+
+  public cancelInvitation(id: string) {
+    return this.request<{ success: boolean }>(`/invitations/${id}/cancel`, {
+      method: 'POST',
+    });
+  }
+
+  // Jobs (Part 17)
+  public getJobs(clientId?: string, premisesId?: string, assessorId?: string) {
+    const params = new URLSearchParams();
+    if (clientId) params.set('clientId', clientId);
+    if (premisesId) params.set('premisesId', premisesId);
+    if (assessorId) params.set('assessorId', assessorId);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return this.request<Job[]>(`/jobs${qs}`);
+  }
+
+  public getJob(id: string) {
+    return this.request<Job>(`/jobs/${id}`);
+  }
+
+  public createJob(data: Partial<Job>) {
+    return this.request<Job>('/jobs', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public updateJob(id: string, data: Partial<Job>) {
+    return this.request<Job>(`/jobs/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public deleteJob(id: string) {
+    return this.request<{ success: boolean }>(`/jobs/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Questionnaire (Part 18)
+  public getQuestions(includeArchived?: boolean) {
+    const q = includeArchived ? '?includeArchived=true' : '';
+    return this.request<QuestionnaireQuestion[]>(`/questions${q}`);
+  }
+
+  public createQuestion(data: Partial<QuestionnaireQuestion>) {
+    return this.request<QuestionnaireQuestion>('/questions', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public updateQuestion(id: string, data: Partial<QuestionnaireQuestion>) {
+    return this.request<QuestionnaireQuestion>(`/questions/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public deleteQuestion(id: string) {
+    return this.request<{ success: boolean }>(`/questions/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  public reorderQuestions(ids: string[]) {
+    return this.request<QuestionnaireQuestion[]>('/questions/reorder', {
+      method: 'POST',
+      body: JSON.stringify({ ids }),
+    });
+  }
+
+  public getQuestionnaireResponses(premisesId: string, jobId?: string) {
+    const params = new URLSearchParams({ premisesId });
+    if (jobId) params.set('jobId', jobId);
+    return this.request<QuestionnaireResponse[]>(`/questionnaire/responses?${params.toString()}`);
+  }
+
+  public saveQuestionnaireResponses(premisesId: string, responses: Record<string, any>, jobId?: string, clientId?: string) {
+    return this.request<{ success: boolean; responses: QuestionnaireResponse[] }>('/questionnaire/responses', {
+      method: 'POST',
+      body: JSON.stringify({ premisesId, responses, jobId, clientId }),
+    });
+  }
+
+  // Findings (Part 22)
+  public getFindings(assessmentId?: string, premisesId?: string) {
+    const params = new URLSearchParams();
+    if (assessmentId) params.set('assessmentId', assessmentId);
+    if (premisesId) params.set('premisesId', premisesId);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    return this.request<Finding[]>(`/findings${qs}`);
+  }
+
+  public getFinding(id: string) {
+    return this.request<Finding>(`/findings/${id}`);
+  }
+
+  public createFinding(data: Partial<Finding>) {
+    return this.request<Finding>('/findings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public updateFinding(id: string, data: Partial<Finding>) {
+    return this.request<Finding>(`/findings/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  public deleteFinding(id: string) {
+    return this.request<{ success: boolean }>(`/findings/${id}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // Email Logs (Part 34)
+  public getEmailLogs() {
+    return this.request<EmailLogRecord[]>('/email-logs');
+  }
+
+  // Test Data Management (Part 45)
+  public seedTestData() {
+    return this.request<{ success: boolean; message: string; result: any }>('/test-data/seed', {
+      method: 'POST',
+    });
+  }
+
+  public purgeTestData() {
+    return this.request<{ success: boolean; message: string; result: any }>('/test-data/purge', {
+      method: 'POST',
+    });
   }
 }
 

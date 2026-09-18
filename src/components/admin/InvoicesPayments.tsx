@@ -283,7 +283,7 @@ export const InvoicesPayments: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center space-x-1 overflow-x-auto w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-1 w-full sm:w-auto">
           {['ALL', 'Unpaid', 'Paid', 'Refunded', 'Overdue'].map((st) => (
             <button
               key={st}
@@ -399,18 +399,18 @@ export const InvoicesPayments: React.FC = () => {
               <div className="flex justify-between items-start border-b border-slate-200 pb-6">
                 <div>
                   <h2 className="text-xl font-bold tracking-tight text-slate-900">
-                    APEX FIRE SAFETY UK
+                    AURELIUS COMMERCIAL FIRE SAFETY
                   </h2>
                   <p className="text-[11px] text-slate-500 mt-1">
-                    VAT Registration Number: GB 384 9281 05
+                    Charlie Hughes • Non-Sleeping Commercial Premises Specialist
                     <br />
-                    120 Moorgate, London, EC2M 6UR
+                    VAT Status: Small Business / Not VAT Registered (Zero VAT)
                     <br />
-                    accounts@apexfire.co.uk
+                    charlie.a.s.hughes@gmail.com • 020 8050 4912
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-emerald-700">VAT INVOICE</div>
+                  <div className="text-lg font-bold text-emerald-700">COMMERCIAL INVOICE</div>
                   <div className="text-xs font-mono font-semibold text-slate-800 mt-1">
                     Invoice No: {selectedInvoice.invoiceNumber}
                   </div>
@@ -478,12 +478,12 @@ export const InvoicesPayments: React.FC = () => {
               <div className="flex justify-end">
                 <div className="w-64 space-y-1.5 border-t border-slate-200 pt-3">
                   <div className="flex justify-between text-slate-600">
-                    <span>Net Total:</span>
+                    <span>Net Assessment Fee:</span>
                     <span className="font-mono">£{selectedInvoice.netAmount?.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-slate-600">
-                    <span>VAT (20%):</span>
-                    <span className="font-mono">£{selectedInvoice.vatAmount?.toFixed(2)}</span>
+                  <div className="flex justify-between text-emerald-700">
+                    <span>VAT (Zero-Rated / No VAT):</span>
+                    <span className="font-mono">£0.00</span>
                   </div>
                   <div className="flex justify-between text-sm font-bold text-slate-900 border-t border-slate-200 pt-1.5">
                     <span>Total Due (GBP):</span>
@@ -551,6 +551,16 @@ export const InvoicesPayments: React.FC = () => {
                   ))}
                 </div>
               )}
+            </div>
+
+            <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedInvoice(null)}
+                className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg border border-slate-200 transition"
+              >
+                Back to Invoices
+              </button>
             </div>
           </div>
         </div>
@@ -704,8 +714,8 @@ export const InvoicesPayments: React.FC = () => {
                 <input
                   type="text"
                   maxLength={22}
-                  placeholder="APEX FIRE SAFETY"
-                  value={modalSettings.stripeStatementDescriptor || 'APEX FIRE SAFETY'}
+                  placeholder="AURELIUS FIRE"
+                  value={modalSettings.stripeStatementDescriptor || 'AURELIUS FIRE'}
                   onChange={(e) =>
                     setModalSettings({ ...modalSettings, stripeStatementDescriptor: e.target.value })
                   }

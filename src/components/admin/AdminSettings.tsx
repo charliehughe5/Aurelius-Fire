@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api';
 import { BusinessSettings, LegalPolicy, PricingRule } from '../../types';
+import { QuestionnaireSettings } from './QuestionnaireSettings';
+import { TestDataManager } from './TestDataManager';
+import { AuditAndEmailLogs } from './AuditAndEmailLogs';
 import {
   Settings,
   ShieldAlert,
@@ -24,6 +27,8 @@ import {
   ShieldCheck,
   Zap,
   Info,
+  Database,
+  Activity,
 } from 'lucide-react';
 
 export const AdminSettings: React.FC = () => {
@@ -36,7 +41,9 @@ export const AdminSettings: React.FC = () => {
   const [isPolicySaved, setIsPolicySaved] = useState(false);
 
   // Settings Navigation Tab
-  const [activeTab, setActiveTab] = useState<'all' | 'profile' | 'stripe' | 'pricing' | 'policies'>('all');
+  const [activeTab, setActiveTab] = useState<
+    'all' | 'profile' | 'stripe' | 'pricing' | 'policies' | 'questionnaire' | 'test_data' | 'logs'
+  >('all');
 
   // Stripe Gateway Specific State
   const [showSecretKey, setShowSecretKey] = useState(false);
@@ -220,6 +227,9 @@ export const AdminSettings: React.FC = () => {
             },
             { id: 'pricing', label: 'Pricing Multipliers' },
             { id: 'policies', label: 'Legal Policies' },
+            { id: 'questionnaire', label: 'Questionnaire (Part 18)' },
+            { id: 'test_data', label: 'Test Data Engine (Part 45)' },
+            { id: 'logs', label: 'Audit & Email Logs (Parts 33/34)' },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -297,7 +307,7 @@ export const AdminSettings: React.FC = () => {
             <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
             <div className="space-y-1 flex-1">
               <p>
-                <strong className="text-slate-800">Add Stripe Details Later Friendly:</strong> You are free to enter your Stripe keys at any time. If you do not have your keys right now, Apex Fire Safety automatically runs on the integrated <strong>Sandbox Payment Simulator</strong>. Clients can accept quotes and submit card payments in simulation mode with instant invoice mark-paid and receipt workflows.
+                <strong className="text-slate-800">Add Stripe Details Later Friendly:</strong> You are free to enter your Stripe keys at any time. If you do not have your keys right now, Aurelius Commercial Fire Safety automatically runs on the integrated <strong>Sandbox Payment Simulator</strong>. Clients can accept quotes and submit card payments in simulation mode with instant invoice mark-paid and receipt workflows.
               </p>
             </div>
           </div>
@@ -457,8 +467,8 @@ export const AdminSettings: React.FC = () => {
                 <input
                   type="text"
                   maxLength={22}
-                  placeholder="APEX FIRE SAFETY"
-                  value={settings.stripeStatementDescriptor || 'APEX FIRE SAFETY'}
+                  placeholder="AURELIUS FIRE"
+                  value={settings.stripeStatementDescriptor || 'AURELIUS FIRE'}
                   onChange={(e) =>
                     setSettings({ ...settings, stripeStatementDescriptor: e.target.value })
                   }
@@ -716,9 +726,12 @@ export const AdminSettings: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block font-semibold text-slate-700 mb-1">VAT Registration No</label>
+                    <label className="block font-semibold text-slate-700 mb-1">
+                      VAT Registration No <span className="text-[10px] font-normal text-emerald-600">(Zero VAT / Exempt)</span>
+                    </label>
                     <input
                       type="text"
+                      placeholder="Not VAT Registered (Zero VAT)"
                       value={settings.vatNumber}
                       onChange={(e) => setSettings({ ...settings, vatNumber: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-slate-800"
@@ -927,6 +940,27 @@ export const AdminSettings: React.FC = () => {
               />
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Pre-Assessment Questionnaire Configurator */}
+      {(activeTab === 'all' || activeTab === 'questionnaire') && (
+        <div className="pt-4">
+          <QuestionnaireSettings />
+        </div>
+      )}
+
+      {/* Test Data Engine */}
+      {(activeTab === 'all' || activeTab === 'test_data') && (
+        <div className="pt-4">
+          <TestDataManager />
+        </div>
+      )}
+
+      {/* Audit Trail & Email Transmission Logs */}
+      {(activeTab === 'all' || activeTab === 'logs') && (
+        <div className="pt-4">
+          <AuditAndEmailLogs />
         </div>
       )}
     </div>

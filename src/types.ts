@@ -1,16 +1,87 @@
 // Data Types for UK Fire Risk Assessment Operations System
 
-export type UserRole = 'OWNER' | 'ADMIN' | 'ASSESSOR' | 'ASSISTANT' | 'CLIENT';
+export type UserRole =
+  | 'PLATFORM_ADMIN'
+  | 'ASSESSOR_ADMIN'
+  | 'ASSESSOR'
+  | 'TEAM_MEMBER'
+  | 'CLIENT_ADMIN'
+  | 'CLIENT_USER'
+  // Backward compatibility aliases
+  | 'OWNER'
+  | 'ADMIN'
+  | 'ASSISTANT'
+  | 'CLIENT';
 
 export interface User {
   id: string;
   email: string;
   name: string;
   role: UserRole;
-  clientId?: string; // If role === 'CLIENT'
+  organisationId?: string;
+  clientId?: string; // If role is client
   organisationName?: string;
   position?: string;
   telephone?: string;
+  isActive?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export type OrganisationType = 'PLATFORM' | 'ASSESSOR_COMPANY' | 'CLIENT';
+
+export interface Organisation {
+  id: string;
+  name: string;
+  tradingName?: string;
+  type: OrganisationType;
+  companyNumber?: string;
+  address: string;
+  postcode: string;
+  website?: string;
+  email: string;
+  telephone: string;
+  mainContactName?: string;
+  mainContactEmail?: string;
+  status: 'Lead' | 'Enquiry' | 'Quoted' | 'Active' | 'Archived';
+  assignedAssessorId?: string;
+  tags?: string[];
+  notes?: string;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Contact {
+  id: string;
+  organisationId: string;
+  name: string;
+  jobTitle?: string;
+  email: string;
+  telephone?: string;
+  phone?: string;
+  mobile?: string;
+  contactType: 'Primary' | 'Site Keyholder' | 'Finance / Billing' | 'Responsible Person' | 'Technical / Facilities' | string;
+  isPrimary: boolean;
+  notes?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface Invitation {
+  id: string;
+  email: string;
+  name?: string;
+  recipientName?: string;
+  organisationId: string;
+  organisationName?: string;
+  role: UserRole;
+  status: 'Pending' | 'Accepted' | 'Expired' | 'Cancelled';
+  token: string;
+  invitedByUserId: string;
+  invitedByName?: string;
+  expiresAt: string;
+  acceptedAt?: string;
   createdAt: string;
 }
 
@@ -174,8 +245,13 @@ export interface Enquiry {
   id: string;
   clientId?: string;
   premisesId?: string;
+  quoteId?: string;
   name: string;
   company: string;
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  companyName?: string;
   email: string;
   telephone: string;
   position?: string;
@@ -210,6 +286,11 @@ export type QuoteStatus =
   | 'Draft'
   | 'Sent'
   | 'Viewed'
+  | 'Client Accepted - Awaiting Assessor'
+  | 'Awaiting Assessor Confirmation'
+  | 'Assessor Confirmed'
+  | 'Date Counter-Offered'
+  | 'Assessor Declined'
   | 'Accepted'
   | 'Declined'
   | 'Expired'
@@ -250,6 +331,26 @@ export interface Quote {
   acceptedByEmail?: string;
   acceptedIp?: string;
   versionAccepted?: string;
+  // Preferred visit slot & Assessor decision
+  preferredSlotDate?: string;
+  preferredSlotTime?: string;
+  preferredSlotNotes?: string;
+  assessorProposedDate?: string;
+  assessorProposedTime?: string;
+  assessorDecision?: 'Pending' | 'Accepted' | 'Declined' | 'CounterOffered';
+  assessorDeclineReason?: string;
+  assessorDecisionNotes?: string;
+  assessorDecisionAt?: string;
+  // Contract & Pre-assessment status
+  contractSigned?: boolean;
+  contractSignedAt?: string;
+  contractSignerName?: string;
+  contractSignerPosition?: string;
+  contractSignatureData?: string;
+  preAssessmentUnlocked?: boolean;
+  preAssessmentSubmitted?: boolean;
+  preAssessmentSubmittedAt?: string;
+  preAssessmentData?: Record<string, any>;
   createdAt: string;
   updatedAt: string;
   // UI helpers
@@ -303,6 +404,8 @@ export interface PaymentRecord {
   invoiceId?: string;
   quoteId?: string;
   clientId: string;
+  organisationId?: string;
+  organisationName?: string;
   amount: number;
   currency: 'GBP';
   status: 'succeeded' | 'pending' | 'failed' | 'refunded';
@@ -340,6 +443,104 @@ export interface Appointment {
   updatedAt: string;
   clientName?: string;
   premisesName?: string;
+}
+
+export type JobStatus =
+  | 'New'
+  | 'Booked'
+  | 'Pre-assessment'
+  | 'Ready for assessment'
+  | 'Site assessment'
+  | 'Draft report'
+  | 'QA'
+  | 'Issued'
+  | 'Complete'
+  | 'Review due'
+  | 'Archived';
+
+export interface Job {
+  id: string;
+  jobNumber: string;
+  clientId: string;
+  premisesId: string;
+  quoteId?: string;
+  assessorId?: string;
+  assessorName?: string;
+  assessmentType: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  status: JobStatus | string;
+  instructions?: string;
+  siteNotes?: string;
+  completionDate?: string;
+  reportStatus?: string;
+  reportIssueDate?: string;
+  reviewDate?: string;
+  isArchived: boolean;
+  createdAt: string;
+  updatedAt: string;
+  clientName?: string;
+  premisesName?: string;
+}
+
+export type QuestionType =
+  | 'text'
+  | 'long_text'
+  | 'number'
+  | 'date'
+  | 'yes_no'
+  | 'single_select'
+  | 'multiple_select'
+  | 'file_upload';
+
+export interface QuestionnaireQuestion {
+  id: string;
+  category: string;
+  questionText: string;
+  questionType: QuestionType;
+  options?: string[];
+  isMandatory: boolean;
+  helpText?: string;
+  guidance?: string;
+  orderIndex: number;
+  isArchived: boolean;
+  createdAt: string;
+}
+
+export interface QuestionnaireResponse {
+  id: string;
+  jobId?: string;
+  premisesId: string;
+  clientId: string;
+  questionId: string;
+  responseValue: any;
+  updatedAt: string;
+}
+
+export interface Finding {
+  id: string;
+  assessmentId?: string;
+  premisesId: string;
+  clientId: string;
+  findingText: string;
+  category: string;
+  riskRating: 'LOW' | 'MEDIUM' | 'HIGH' | 'IMMEDIATE' | string;
+  recommendation: string;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface EmailLogRecord {
+  id: string;
+  recipientEmail: string;
+  recipientName?: string;
+  template: string;
+  subject: string;
+  body: string;
+  status: 'queued' | 'sent' | 'failed';
+  error?: string;
+  sentAt: string;
+  createdAt: string;
 }
 
 export type DocumentCategory =
@@ -383,6 +584,8 @@ export interface DocumentRecord {
   fileSize?: number;
   fileType?: string;
   version?: number;
+  parentDocumentId?: string;
+  versionNotes?: string;
   issueDate?: string;
   expiryDate?: string; // YYYY-MM-DD
   notes?: string;

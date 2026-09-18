@@ -230,22 +230,25 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
   return (
     <div className="space-y-16 py-6 selection:bg-slate-900 selection:text-white">
       {/* 1. APPLE-STYLE HERO SECTION */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white p-8 sm:p-14 lg:p-16 border border-slate-800 shadow-2xl">
+      <section
+        className="relative overflow-hidden rounded-3xl bg-slate-950 text-white p-8 sm:p-14 lg:p-16 border border-slate-800 shadow-2xl"
+        style={{ backgroundColor: '#020617' }}
+      >
         {/* Subtle atmospheric glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
           {/* Eyebrow badge */}
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-xs font-semibold tracking-wide border border-white/15">
-            <Award className="w-3.5 h-3.5 text-amber-400" />
-            <span>NEBOSH Certified • PAS 79-1:2020 • Regulatory Reform Order 2005</span>
+          <div className="inline-flex flex-wrap sm:flex-nowrap items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-amber-300 text-[11px] sm:text-xs font-semibold tracking-wide border border-white/15 max-w-full text-center">
+            <Award className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>NEBOSH Certified • PAS 79-1:2020 • RRO 2005</span>
           </div>
 
           {/* Clean Apple-style Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.1] font-sans">
             Commercial Fire Risk Assessments.
             <br />
-            <span className="text-slate-400 font-normal text-3xl sm:text-4xl md:text-5xl block mt-2">
+            <span className="text-slate-300 font-normal text-3xl sm:text-4xl md:text-5xl block mt-2">
               For shops, offices & workspaces.
             </span>
           </h1>
@@ -267,7 +270,8 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
             </a>
             <a
               href="#coverage-section"
-              className="w-full sm:w-auto px-6 py-3.5 bg-slate-800/80 hover:bg-slate-700/80 text-white font-medium text-sm rounded-full border border-slate-700/80 backdrop-blur-md transition-all duration-200 flex items-center justify-center space-x-2 active:scale-95"
+              style={{ backgroundColor: '#1e293b' }}
+              className="w-full sm:w-auto px-6 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm rounded-full border border-slate-700 transition-all duration-200 flex items-center justify-center space-x-2 active:scale-95"
             >
               <span>See What We Cover</span>
               <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -276,22 +280,34 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
           {/* 4 Apple-style Value Metric Pills */}
           <div className="pt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-left">
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+            <div
+              className="p-4 rounded-2xl border border-white/10"
+              style={{ backgroundColor: '#0f172a' }}
+            >
               <div className="text-xs text-slate-400 font-medium">Flat Pricing</div>
               <div className="text-lg font-bold text-white mt-0.5">From £245</div>
               <div className="text-[11px] text-amber-400 font-medium mt-1">Zero VAT added</div>
             </div>
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+            <div
+              className="p-4 rounded-2xl border border-white/10"
+              style={{ backgroundColor: '#0f172a' }}
+            >
               <div className="text-xs text-slate-400 font-medium">Turnaround</div>
               <div className="text-lg font-bold text-white mt-0.5">48 Hours</div>
               <div className="text-[11px] text-emerald-400 font-medium mt-1">Digital PDF report</div>
             </div>
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+            <div
+              className="p-4 rounded-2xl border border-white/10"
+              style={{ backgroundColor: '#0f172a' }}
+            >
               <div className="text-xs text-slate-400 font-medium">Clear Scope</div>
               <div className="text-lg font-bold text-white mt-0.5">Commercial</div>
               <div className="text-[11px] text-blue-400 font-medium mt-1">No sleeping risk</div>
             </div>
-            <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-md">
+            <div
+              className="p-4 rounded-2xl border border-white/10"
+              style={{ backgroundColor: '#0f172a' }}
+            >
               <div className="text-xs text-slate-400 font-medium">UK Legislation</div>
               <div className="text-lg font-bold text-white mt-0.5">Audit-Ready</div>
               <div className="text-[11px] text-purple-400 font-medium mt-1">RRFSO 2005 & BSA</div>
@@ -713,6 +729,8 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                       key={prem.id}
                       type="button"
                       onClick={() => handleSelectPremises(prem.id)}
+                      aria-label={`Select ${prem.name}`}
+                      style={{ backgroundColor: isSelected ? '#0f172a' : '#ffffff' }}
                       className={`p-4 rounded-2xl text-left transition-all duration-200 flex flex-col justify-between border ${
                         isSelected
                           ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/10'
@@ -741,7 +759,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
                         <div className="font-bold text-sm tracking-tight">{prem.name}</div>
                         <p
-                          className={`text-xs line-clamp-2 leading-relaxed ${
+                          className={`text-xs min-h-[2.5rem] leading-relaxed ${
                             isSelected ? 'text-slate-300' : 'text-slate-500'
                           }`}
                         >
@@ -768,8 +786,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <label className="block text-slate-600 font-medium mb-1">Approx. Floor Area (m²)</label>
+                    <label htmlFor="approxFloorAreaSqM" className="block text-slate-600 font-medium mb-1">
+                      Approx. Floor Area (m²)
+                    </label>
                     <input
+                      id="approxFloorAreaSqM"
+                      aria-label="Approximate Floor Area in square metres"
                       type="number"
                       value={approxFloorAreaSqM}
                       onChange={(e) => setApproxFloorAreaSqM(Math.max(10, Number(e.target.value)))}
@@ -780,8 +802,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-slate-600 font-medium mb-1">Number of Floors</label>
+                    <label htmlFor="numberOfFloors" className="block text-slate-600 font-medium mb-1">
+                      Number of Floors
+                    </label>
                     <select
+                      id="numberOfFloors"
+                      aria-label="Number of Floors"
                       value={numberOfFloors}
                       onChange={(e) => setNumberOfFloors(Number(e.target.value))}
                       className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-slate-900 text-slate-800 font-medium"
@@ -797,8 +823,10 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
                 {/* Annual Review Discount Toggle */}
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <label className="flex items-center space-x-2.5 cursor-pointer text-xs">
+                  <label htmlFor="isReviewOfPreviousFra" className="flex items-center space-x-2.5 cursor-pointer text-xs">
                     <input
+                      id="isReviewOfPreviousFra"
+                      aria-label="Annual review of an existing Fire Risk Assessment"
                       type="checkbox"
                       checked={isReviewOfPreviousFra}
                       onChange={(e) => setIsReviewOfPreviousFra(e.target.checked)}
@@ -820,7 +848,10 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
             {/* Right: Instant Calculation Summary & Quote Dispatch Form */}
             <div className="lg:col-span-5 space-y-6">
               {/* Apple-style Price Display Card */}
-              <div className="bg-slate-950 text-white p-6 sm:p-7 rounded-3xl border border-slate-800 shadow-xl space-y-5">
+              <div
+                className="bg-slate-950 text-white p-6 sm:p-7 rounded-3xl border border-slate-800 shadow-xl space-y-5"
+                style={{ backgroundColor: '#020617' }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="text-xs font-semibold text-slate-400">Fixed Assessment Price</div>
                   <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">
@@ -835,7 +866,10 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   <span className="text-slate-400 text-xs font-medium">flat fee</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-2 text-xs">
+                <div
+                  className="p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs"
+                  style={{ backgroundColor: '#0f172a' }}
+                >
                   <div className="flex justify-between text-slate-300">
                     <span>Premises Category:</span>
                     <span className="font-semibold text-white">{selectedPremisesKey}</span>
@@ -862,8 +896,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   )}
 
                   <div>
-                    <label className="block text-slate-300 font-medium mb-1">Your Name *</label>
+                    <label htmlFor="quoteName" className="block text-slate-300 font-medium mb-1">
+                      Your Name *
+                    </label>
                     <input
+                      id="quoteName"
+                      aria-label="Your Name"
                       type="text"
                       required
                       value={name}
@@ -875,8 +913,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-slate-300 font-medium mb-1">Company / Trading Name *</label>
+                      <label htmlFor="quoteCompany" className="block text-slate-300 font-medium mb-1">
+                        Company / Trading Name *
+                      </label>
                       <input
+                        id="quoteCompany"
+                        aria-label="Company or Trading Name"
                         type="text"
                         required
                         value={company}
@@ -886,8 +928,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                       />
                     </div>
                     <div>
-                      <label className="block text-slate-300 font-medium mb-1">Telephone</label>
+                      <label htmlFor="quoteTelephone" className="block text-slate-300 font-medium mb-1">
+                        Telephone
+                      </label>
                       <input
+                        id="quoteTelephone"
+                        aria-label="Telephone Number"
                         type="tel"
                         value={telephone}
                         onChange={(e) => setTelephone(e.target.value)}
@@ -898,8 +944,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-medium mb-1">Email Address (for instant quote) *</label>
+                    <label htmlFor="quoteEmail" className="block text-slate-300 font-medium mb-1">
+                      Email Address (for instant quote) *
+                    </label>
                     <input
+                      id="quoteEmail"
+                      aria-label="Email Address"
                       type="email"
                       required
                       value={email}
@@ -910,8 +960,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-medium mb-1">Premises Address to Assess *</label>
+                    <label htmlFor="quotePremisesAddress" className="block text-slate-300 font-medium mb-1">
+                      Premises Address to Assess *
+                    </label>
                     <input
+                      id="quotePremisesAddress"
+                      aria-label="Premises Address to Assess"
                       type="text"
                       required
                       value={premisesAddress}
@@ -922,8 +976,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-medium mb-1">Notes / Preferred Inspection Dates</label>
+                    <label htmlFor="quoteAdditionalNotes" className="block text-slate-300 font-medium mb-1">
+                      Notes / Preferred Inspection Dates
+                    </label>
                     <input
+                      id="quoteAdditionalNotes"
+                      aria-label="Notes or Preferred Inspection Dates"
                       type="text"
                       value={additionalNotes}
                       onChange={(e) => setAdditionalNotes(e.target.value)}

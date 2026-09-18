@@ -15,6 +15,7 @@ const POLICY_ICONS: Record<string, any> = {
   cancellation_policy: RefreshCw,
   complaints_procedure: MessageSquare,
   document_retention: Archive,
+  cookie_policy: ShieldCheck,
 };
 
 export const PoliciesModal: React.FC<PoliciesModalProps> = ({

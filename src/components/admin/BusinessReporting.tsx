@@ -34,15 +34,25 @@ export const BusinessReporting: React.FC = () => {
 
   const handleExportCsv = () => {
     if (!report) return;
+    const currentStats = report.stats || {
+      totalClients: report.totalClients ?? 0,
+      totalPremises: report.totalPremises ?? 0,
+      activeQuotes: report.quotesAwaitingResponse ?? 0,
+      paidRevenue: report.paymentsReceivedTotal ?? 0,
+      pendingInvoicesAmount: report.outstandingInvoicesTotal ?? 0,
+      openActions: report.overdueActionsCount ?? 0,
+      overdueActions: report.overdueActionsCount ?? 0,
+    };
+
     const rows = [
       ['Metric', 'Value'],
-      ['Total Clients', report.stats.totalClients],
-      ['Total Premises', report.stats.totalPremises],
-      ['Active Quotes', report.stats.activeQuotes],
-      ['Paid Revenue (GBP)', report.stats.paidRevenue.toFixed(2)],
-      ['Pending Invoices (GBP)', report.stats.pendingInvoicesAmount.toFixed(2)],
-      ['Open Fire Safety Actions', report.stats.openActions],
-      ['Overdue Fire Safety Actions', report.stats.overdueActions],
+      ['Total Clients', currentStats.totalClients],
+      ['Total Premises', currentStats.totalPremises],
+      ['Active Quotes', currentStats.activeQuotes],
+      ['Paid Revenue (GBP)', Number(currentStats.paidRevenue || 0).toFixed(2)],
+      ['Pending Invoices (GBP)', Number(currentStats.pendingInvoicesAmount || 0).toFixed(2)],
+      ['Open Fire Safety Actions', currentStats.openActions],
+      ['Overdue Fire Safety Actions', currentStats.overdueActions],
     ];
 
     const csvContent = 'data:text/csv;charset=utf-8,' + rows.map((e) => e.join(',')).join('\n');
@@ -63,7 +73,15 @@ export const BusinessReporting: React.FC = () => {
     );
   }
 
-  const { stats } = report;
+  const stats = report.stats || {
+    totalClients: report.totalClients ?? 0,
+    totalPremises: report.totalPremises ?? 0,
+    activeQuotes: report.quotesAwaitingResponse ?? 0,
+    paidRevenue: report.paymentsReceivedTotal ?? 0,
+    pendingInvoicesAmount: report.outstandingInvoicesTotal ?? 0,
+    openActions: report.overdueActionsCount ?? 0,
+    overdueActions: report.overdueActionsCount ?? 0,
+  };
   const quoteConversion = stats.activeQuotes > 0 ? 68.5 : 75.0; // Realistic conversion calculation
 
   return (

@@ -318,7 +318,10 @@ export const CommercialServices: React.FC<CommercialServicesProps> = ({ onGetQuo
       </div>
 
       {/* APPLE-STYLE BOTTOM BANNER */}
-      <div className="bg-slate-950 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div
+        className="bg-slate-950 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-6"
+        style={{ backgroundColor: '#020617' }}
+      >
         <div className="space-y-1 text-center sm:text-left">
           <h3 className="text-xl font-bold text-white tracking-tight">Need a Quote for Your Commercial Premises?</h3>
           <p className="text-slate-400 text-xs sm:text-sm">
