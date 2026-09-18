@@ -164,4 +164,9 @@ export default function App() {
       <AdminAppContent />
     </AuthProvider>
   );
-}
+}import { ErrorBoundary } from './components/ErrorBoundary';
+import { PricingProvider } from './context/PricingContext';
+import PricingManager from './components/admin/PricingManager';
+import MessagingTab from './components/portal/MessagingTab';
+import FRADelivery from './components/fra/FRADelivery';
+import SettingsPage from './components/admin/SettingsPage';

@@ -1,8 +1,6 @@
 {
   "name": "FireVault CRM",
-  "description": "Production UK Fire Risk Assessment CRM and multi-tenant client portal for fire safety assessors, commercial premises, and responsible persons.",
+  "description": "Production UK Fire Risk Assessment CRM and multi-tenant client portal",
   "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": []
 }
