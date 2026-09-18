@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import Stripe from 'stripe';
 import { db } from './db.ts';
 import { calculateQuote, PriceCalculationInput } from './pricing.ts';
@@ -12,6 +12,16 @@ import {
   ActionStatus,
   FraReviewTrigger,
 } from '../src/types.ts';
+
+// Robust string sanitiser against XSS and unwanted HTML/script injections
+export function sanitizeText(str?: unknown): string {
+  if (typeof str !== 'string') return '';
+  return str
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '')
+    .trim();
+}
 
 export const apiRouter = express.Router();
 
@@ -36,7 +46,7 @@ function getRequestUser(req: Request): User {
 // 1. AUTHENTICATION & SESSIONS
 // ==========================================
 
-apiRouter.get('/auth/users', (req: Request, res: Response) => {
+apiRouter.all('/auth/users', (req: Request, res: Response) => {
   res.json(db.getUsers());
 });
 
@@ -378,26 +388,45 @@ apiRouter.post('/enquiries/:id/convert', (req: Request, res: Response) => {
 // 3. QUOTE CALCULATOR & MANAGEMENT
 // ==========================================
 
-apiRouter.post('/quotes/calculate', (req: Request, res: Response) => {
-  const input: PriceCalculationInput = req.body;
-  const result = calculateQuote(input);
+const handleQuoteCalculation = (req: Request, res: Response) => {
+  const data = req.method === 'GET' ? req.query : (req.body || {});
+  const result = calculateQuote({
+    premisesType: (data.premisesType as any) || 'Offices & Commercial',
+    approxFloorAreaSqM: data.approxFloorAreaSqM ? Number(data.approxFloorAreaSqM) : undefined,
+    numberOfFloors: data.numberOfFloors ? Number(data.numberOfFloors) : undefined,
+    maxOccupancy: data.maxOccupancy ? Number(data.maxOccupancy) : undefined,
+    sleepingAccommodation: data.sleepingAccommodation === true || data.sleepingAccommodation === 'true',
+    multiOccupancyBuilding: data.multiOccupancyBuilding === true || data.multiOccupancyBuilding === 'true',
+    isReviewOfPreviousFra:
+      data.isReviewOfPreviousFra === true ||
+      data.isReviewOfPreviousFra === 'true' ||
+      data.isReview === true ||
+      data.isReview === 'true',
+    outOfHours: data.outOfHours === true || data.outOfHours === 'true',
+    weekend: data.weekend === true || data.weekend === 'true',
+    outsideLondonTravel: data.outsideLondonTravel === true || data.outsideLondonTravel === 'true',
+    followUpVisitRequired: data.followUpVisitRequired === true || data.followUpVisitRequired === 'true',
+    compartmentationSampling: data.compartmentationSampling === true || data.compartmentationSampling === 'true',
+  });
   res.json(result);
-});
+};
+
+apiRouter.get('/quotes/calculate', handleQuoteCalculation);
+apiRouter.post('/quotes/calculate', handleQuoteCalculation);
 
 // Instant Commercial Quote Dispatch (Generates quote, logs message, dispatches to client email)
 apiRouter.post('/quotes/instant-dispatch', (req: Request, res: Response) => {
-  const {
-    name,
-    email,
-    company,
-    telephone,
-    premisesAddress,
-    premisesType,
-    approxSizeSqM,
-    numberOfFloors,
-    isReview,
-    notes,
-  } = req.body;
+  const rawBody = req.body || {};
+  const name = sanitizeText(rawBody.name);
+  const email = sanitizeText(rawBody.email).toLowerCase();
+  const company = sanitizeText(rawBody.company);
+  const telephone = sanitizeText(rawBody.telephone);
+  const premisesAddress = sanitizeText(rawBody.premisesAddress);
+  const premisesType = sanitizeText(rawBody.premisesType) || 'Shops & Retail';
+  const approxSizeSqM = rawBody.approxSizeSqM;
+  const numberOfFloors = rawBody.numberOfFloors;
+  const isReview = rawBody.isReview;
+  const notes = sanitizeText(rawBody.notes);
 
   if (!name || !email || !company || !premisesAddress) {
     return res.status(400).json({ error: 'Name, company name, email address, and premises address are required.' });
@@ -405,7 +434,7 @@ apiRouter.post('/quotes/instant-dispatch', (req: Request, res: Response) => {
 
   // 1. Calculate price using Charlie Hughes commercial rates
   const quoteCalc = calculateQuote({
-    premisesType: premisesType || 'Shops & Retail',
+    premisesType: (premisesType as any) || 'Shops & Retail',
     approxFloorAreaSqM: Number(approxSizeSqM) || 120,
     numberOfFloors: Number(numberOfFloors) || 1,
     maxOccupancy: 15,
@@ -426,7 +455,9 @@ apiRouter.post('/quotes/instant-dispatch', (req: Request, res: Response) => {
       billingAddress: premisesAddress,
       preferredContactMethod: 'Email',
       status: 'Quoted',
-      notes: `Generated via Aurelius Instant Commercial Quote Engine on ${new Date().toLocaleDateString('en-GB')}`,
+      notes: notes
+        ? `${notes} (Generated via Aurelius Instant Commercial Quote Engine on ${new Date().toLocaleDateString('en-GB')})`
+        : `Generated via Aurelius Instant Commercial Quote Engine on ${new Date().toLocaleDateString('en-GB')}`,
     });
   }
 
@@ -543,6 +574,9 @@ apiRouter.get('/quotes', (req: Request, res: Response) => {
 });
 
 apiRouter.get('/quotes/:id', (req: Request, res: Response) => {
+  if (req.params.id === 'calculate') {
+    return handleQuoteCalculation(req, res);
+  }
   const quote = db.getQuoteById(req.params.id);
   if (!quote) return res.status(404).json({ error: 'Quote not found.' });
 
@@ -1132,8 +1166,9 @@ apiRouter.post('/quotes/:id/decline', (req: Request, res: Response) => {
 // ==========================================
 
 apiRouter.get('/clients', (req: Request, res: Response) => {
-  const includeArchived = req.query.includeArchived === 'true';
-  res.json(db.getClients(includeArchived));
+  const inc = req.query.includeArchived;
+  const includeArchived = inc === 'true' || inc === '1' || inc === 'yes' || String(inc) === 'true';
+  res.json(db.getClients(Boolean(includeArchived)));
 });
 
 apiRouter.get('/clients/:id', (req: Request, res: Response) => {
@@ -2967,4 +3002,18 @@ apiRouter.post('/test-data/purge', (req: Request, res: Response) => {
   db.logAudit(user.id, user.name, user.role, 'PURGE_TEST_DATA', 'SYSTEM', 'TEST_DATASET');
   res.json({ success: true, message: 'All test data purged cleanly.', result });
 });
+
+// ==========================================
+// 29. FALLBACK 404 & ERROR HANDLING (JSON SAFE)
+// ==========================================
+
+apiRouter.all('*', (req: Request, res: Response) => {
+  res.status(404).json({ error: 'API endpoint not found', path: req.originalUrl });
+});
+
+apiRouter.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('API Error handler:', err);
+  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+});
+
 

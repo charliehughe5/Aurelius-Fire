@@ -184,7 +184,16 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
     e.preventDefault();
     setErrorMessage('');
 
-    if (!name.trim() || !company.trim() || !email.trim() || !premisesAddress.trim()) {
+    // Client-side sanitisation to strip script/HTML tags
+    const sanitize = (val: string) => val.replace(/<[^>]*>/g, '').replace(/[<>]/g, '').trim();
+    const cleanName = sanitize(name);
+    const cleanCompany = sanitize(company);
+    const cleanEmail = sanitize(email);
+    const cleanTelephone = sanitize(telephone);
+    const cleanPremisesAddress = sanitize(premisesAddress);
+    const cleanNotes = sanitize(additionalNotes);
+
+    if (!cleanName || !cleanCompany || !cleanEmail || !cleanPremisesAddress) {
       setErrorMessage('Please provide your name, company name, email address, and premises address.');
       return;
     }
@@ -192,16 +201,16 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
     setIsDispatching(true);
     try {
       const res = await api.instantDispatchQuote({
-        name,
-        email,
-        company,
-        telephone,
-        premisesAddress,
+        name: cleanName,
+        email: cleanEmail,
+        company: cleanCompany,
+        telephone: cleanTelephone,
+        premisesAddress: cleanPremisesAddress,
         premisesType: selectedPremisesKey,
         approxSizeSqM: approxFloorAreaSqM,
         numberOfFloors,
         isReview: isReviewOfPreviousFra,
-        notes: additionalNotes,
+        notes: cleanNotes,
       });
 
       setDispatchedQuote(res.quote);
@@ -342,12 +351,12 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
                   <span>We Cover These Premises</span>
                 </span>
-                <span className="text-xs text-slate-400 font-medium">Commercial Non-Sleeping</span>
+                <span className="text-xs text-slate-600 font-semibold">Commercial Non-Sleeping</span>
               </div>
 
               <div>
                 <h3 className="text-xl font-bold text-slate-900">Commercial Workplaces & Retail</h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-700 mt-1">
                   All assessments conducted strictly to PAS 79-1:2020 standards by Charlie Hughes (NEBOSH).
                 </p>
               </div>
@@ -452,80 +461,80 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
               <div>
                 <h3 className="text-xl font-bold text-slate-900">Sleeping Risk & Residential</h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-700 mt-1">
                   We strictly do not assess any building with overnight sleeping accommodation.
                 </p>
               </div>
 
               {/* Crosses List */}
               <ul className="space-y-3 pt-2">
-                <li className="flex items-start space-x-3 text-sm text-slate-700">
+                <li className="flex items-start space-x-3 text-sm text-slate-800">
                   <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                   <div>
                     <strong className="font-semibold text-slate-900">Sleeping Accommodation of Any Kind:</strong>
-                    <span className="text-slate-500 text-xs block mt-0.5">
+                    <span className="text-slate-700 text-xs block mt-0.5">
                       Any property where persons sleep overnight is outside our operational scope.
                     </span>
                   </div>
                 </li>
 
-                <li className="flex items-start space-x-3 text-sm text-slate-700">
+                <li className="flex items-start space-x-3 text-sm text-slate-800">
                   <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                   <div>
                     <strong className="font-semibold text-slate-900">Residential Flats & Apartment Blocks:</strong>
-                    <span className="text-slate-500 text-xs block mt-0.5">
+                    <span className="text-slate-700 text-xs block mt-0.5">
                       We do not inspect communal areas or private dwellings of residential blocks.
                     </span>
                   </div>
                 </li>
 
-                <li className="flex items-start space-x-3 text-sm text-slate-700">
+                <li className="flex items-start space-x-3 text-sm text-slate-800">
                   <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                   <div>
                     <strong className="font-semibold text-slate-900">Houses in Multiple Occupation (HMOs):</strong>
-                    <span className="text-slate-500 text-xs block mt-0.5">
+                    <span className="text-slate-700 text-xs block mt-0.5">
                       Multi-tenant student houses, bedsits, and shared residential houses.
                     </span>
                   </div>
                 </li>
 
-                <li className="flex items-start space-x-3 text-sm text-slate-700">
+                <li className="flex items-start space-x-3 text-sm text-slate-800">
                   <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                   <div>
                     <strong className="font-semibold text-slate-900">Hotels, B&Bs, Hostels & Guest Houses:</strong>
-                    <span className="text-slate-500 text-xs block mt-0.5">
+                    <span className="text-slate-700 text-xs block mt-0.5">
                       Short-stay hospitality accommodation with sleeping guests.
                     </span>
                   </div>
                 </li>
 
-                <li className="flex items-start space-x-3 text-sm text-slate-700">
+                <li className="flex items-start space-x-3 text-sm text-slate-800">
                   <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                   <div>
                     <strong className="font-semibold text-slate-900">Care Homes, Nursing Homes & Hospitals:</strong>
-                    <span className="text-slate-500 text-xs block mt-0.5">
+                    <span className="text-slate-700 text-xs block mt-0.5">
                       Facilities with vulnerable or non-ambulant sleeping residents.
                     </span>
                   </div>
                 </li>
 
-                <li className="flex items-start space-x-3 text-sm text-slate-700">
+                <li className="flex items-start space-x-3 text-sm text-slate-800">
                   <div className="w-5 h-5 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0 mt-0.5">
                     <X className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
                   <div>
                     <strong className="font-semibold text-slate-900">Airbnbs & Short-Term Holiday Lets:</strong>
-                    <span className="text-slate-500 text-xs block mt-0.5">
+                    <span className="text-slate-700 text-xs block mt-0.5">
                       Residential units rented for temporary tourist or visitor overnight stays.
                     </span>
                   </div>
@@ -577,7 +586,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                     <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold font-mono">
                       {dispatchedQuote.quoteNumber}
                     </span>
-                    <span className="text-xs font-semibold text-slate-500">Official Commercial Quote</span>
+                    <span className="text-xs font-semibold text-slate-700">Official Commercial Quote</span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
                     Quote Dispatched to {email}
@@ -586,7 +595,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
               </div>
 
               <div className="text-left sm:text-right bg-slate-50 sm:bg-transparent p-4 sm:p-0 rounded-2xl border sm:border-0 border-slate-200">
-                <div className="text-xs text-slate-500 font-medium">Fixed Total Fee (No VAT)</div>
+                <div className="text-xs text-slate-700 font-medium">Fixed Total Fee (No VAT)</div>
                 <div className="text-3xl font-black text-slate-900 tracking-tight">
                   £{dispatchedQuote.totalAmount.toFixed(2)}
                 </div>
@@ -601,39 +610,39 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
               <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-3">
                 <div className="font-bold text-slate-900 text-sm">Premises & Contact Details</div>
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
-                  <span className="text-slate-500">Client / Company:</span>
-                  <span className="font-semibold text-slate-800">{company} ({name})</span>
+                  <span className="text-slate-700">Client / Company:</span>
+                  <span className="font-semibold text-slate-900">{company} ({name})</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
-                  <span className="text-slate-500">Premises Address:</span>
-                  <span className="font-semibold text-slate-800 text-right">{premisesAddress}</span>
+                  <span className="text-slate-700">Premises Address:</span>
+                  <span className="font-semibold text-slate-900 text-right">{premisesAddress}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
-                  <span className="text-slate-500">Premises Type:</span>
-                  <span className="font-semibold text-slate-800">{selectedPremisesKey}</span>
+                  <span className="text-slate-700">Premises Type:</span>
+                  <span className="font-semibold text-slate-900">{selectedPremisesKey}</span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-slate-500">Floor Area & Levels:</span>
-                  <span className="font-semibold text-slate-800">{approxFloorAreaSqM} m² ({numberOfFloors} Floor{numberOfFloors > 1 ? 's' : ''})</span>
+                  <span className="text-slate-700">Floor Area & Levels:</span>
+                  <span className="font-semibold text-slate-900">{approxFloorAreaSqM} m² ({numberOfFloors} Floor{numberOfFloors > 1 ? 's' : ''})</span>
                 </div>
               </div>
 
               <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-3">
                 <div className="font-bold text-slate-900 text-sm">Assessment Scope & Compliance</div>
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
-                  <span className="text-slate-500">Lead Assessor:</span>
-                  <span className="font-semibold text-slate-800">Charlie Hughes (NEBOSH Fire Safety)</span>
+                  <span className="text-slate-700">Lead Assessor:</span>
+                  <span className="font-semibold text-slate-900">Charlie Hughes (NEBOSH Fire Safety)</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
-                  <span className="text-slate-500">Governing Standard:</span>
-                  <span className="font-semibold text-slate-800">PAS 79-1:2020 Commercial</span>
+                  <span className="text-slate-700">Governing Standard:</span>
+                  <span className="font-semibold text-slate-900">PAS 79-1:2020 Commercial</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-200/60">
-                  <span className="text-slate-500">Legislation:</span>
-                  <span className="font-semibold text-slate-800">Regulatory Reform (Fire Safety) Order 2005</span>
+                  <span className="text-slate-700">Legislation:</span>
+                  <span className="font-semibold text-slate-900">Regulatory Reform (Fire Safety) Order 2005</span>
                 </div>
                 <div className="flex justify-between py-1">
-                  <span className="text-slate-500">Turnaround:</span>
+                  <span className="text-slate-700">Turnaround:</span>
                   <span className="font-semibold text-emerald-700">48-Hour Digital PDF Delivery</span>
                 </div>
               </div>
@@ -760,7 +769,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                         <div className="font-bold text-sm tracking-tight">{prem.name}</div>
                         <p
                           className={`text-xs min-h-[2.5rem] leading-relaxed ${
-                            isSelected ? 'text-slate-300' : 'text-slate-500'
+                            isSelected ? 'text-slate-300' : 'text-slate-700'
                           }`}
                         >
                           {prem.description}
@@ -768,7 +777,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                       </div>
 
                       <div className="pt-4 mt-2 border-t border-current/10 flex items-center justify-between text-xs">
-                        <span className={isSelected ? 'text-slate-400' : 'text-slate-500'}>Fixed Rate:</span>
+                        <span className={isSelected ? 'text-slate-300' : 'text-slate-700'}>Fixed Rate:</span>
                         <span className={`font-extrabold text-sm ${isSelected ? 'text-amber-400' : 'text-slate-900'}`}>
                           £{prem.flatFee} <span className="text-[10px] font-normal">flat fee</span>
                         </span>
@@ -786,58 +795,66 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <label htmlFor="approxFloorAreaSqM" className="block text-slate-600 font-medium mb-1">
+                    <label htmlFor="approxFloorAreaSqM" id="lbl-approxFloorAreaSqM" className="block text-slate-700 font-semibold mb-1">
                       Approx. Floor Area (m²)
                     </label>
                     <input
                       id="approxFloorAreaSqM"
+                      name="approxFloorAreaSqM"
+                      aria-labelledby="lbl-approxFloorAreaSqM"
                       aria-label="Approximate Floor Area in square metres"
                       type="number"
+                      min={10}
+                      max={10000}
                       value={approxFloorAreaSqM}
                       onChange={(e) => setApproxFloorAreaSqM(Math.max(10, Number(e.target.value)))}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-slate-900 text-slate-800 font-medium"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-slate-900 text-slate-800 font-medium bg-white"
                       placeholder="e.g. 120"
                     />
-                    <span className="text-[11px] text-slate-400 mt-1 block">Most small shops are under 150m²</span>
+                    <span className="text-[11px] text-slate-600 mt-1 block">Most small shops are under 150m²</span>
                   </div>
 
                   <div>
-                    <label htmlFor="numberOfFloors" className="block text-slate-600 font-medium mb-1">
+                    <label htmlFor="numberOfFloors" id="lbl-numberOfFloors" className="block text-slate-700 font-semibold mb-1">
                       Number of Floors
                     </label>
                     <select
                       id="numberOfFloors"
+                      name="numberOfFloors"
+                      aria-labelledby="lbl-numberOfFloors"
                       aria-label="Number of Floors"
                       value={numberOfFloors}
                       onChange={(e) => setNumberOfFloors(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-slate-900 text-slate-800 font-medium"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-slate-900 text-slate-800 font-medium bg-white"
                     >
                       <option value={1}>Single Floor / Ground Level</option>
                       <option value={2}>2 Storeys (e.g. Ground + 1st)</option>
                       <option value={3}>3 Storeys</option>
                       <option value={4}>4+ Storeys</option>
                     </select>
-                    <span className="text-[11px] text-slate-400 mt-1 block">Includes any upper office mezzanine</span>
+                    <span className="text-[11px] text-slate-600 mt-1 block">Includes any upper office mezzanine</span>
                   </div>
                 </div>
 
                 {/* Annual Review Discount Toggle */}
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                  <label htmlFor="isReviewOfPreviousFra" className="flex items-center space-x-2.5 cursor-pointer text-xs">
+                  <label htmlFor="isReviewOfPreviousFra" id="lbl-isReviewOfPreviousFra" className="flex items-center space-x-2.5 cursor-pointer text-xs">
                     <input
                       id="isReviewOfPreviousFra"
+                      name="isReviewOfPreviousFra"
+                      aria-labelledby="lbl-isReviewOfPreviousFra"
                       aria-label="Annual review of an existing Fire Risk Assessment"
                       type="checkbox"
                       checked={isReviewOfPreviousFra}
                       onChange={(e) => setIsReviewOfPreviousFra(e.target.checked)}
                       className="w-4 h-4 rounded text-slate-900 border-slate-300 focus:ring-slate-900"
                     />
-                    <span className="text-slate-700 font-medium">
+                    <span className="text-slate-800 font-medium">
                       This is an annual review of an existing Fire Risk Assessment
                     </span>
                   </label>
                   {isReviewOfPreviousFra && (
-                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                       £50 Review Discount Applied
                     </span>
                   )}
@@ -853,7 +870,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                 style={{ backgroundColor: '#020617' }}
               >
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-slate-400">Fixed Assessment Price</div>
+                  <div className="text-xs font-semibold text-slate-300">Fixed Assessment Price</div>
                   <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">
                     Zero VAT
                   </span>
@@ -863,7 +880,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   <div className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight font-sans">
                     {isCalculating ? '...' : `£${calculatedTotal.toFixed(2)}`}
                   </div>
-                  <span className="text-slate-400 text-xs font-medium">flat fee</span>
+                  <span className="text-slate-300 text-xs font-medium">flat fee</span>
                 </div>
 
                 <div
@@ -896,97 +913,125 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   )}
 
                   <div>
-                    <label htmlFor="quoteName" className="block text-slate-300 font-medium mb-1">
+                    <label htmlFor="quoteName" id="lbl-quoteName" className="block text-slate-200 font-medium mb-1">
                       Your Name *
                     </label>
                     <input
                       id="quoteName"
+                      name="quoteName"
+                      aria-labelledby="lbl-quoteName"
                       aria-label="Your Name"
                       type="text"
                       required
+                      maxLength={100}
+                      pattern="^[^<>]*$"
+                      title="Please enter your name without HTML tags"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="e.g. John Smith"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-hidden focus:border-amber-500"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label htmlFor="quoteCompany" className="block text-slate-300 font-medium mb-1">
+                      <label htmlFor="quoteCompany" id="lbl-quoteCompany" className="block text-slate-200 font-medium mb-1">
                         Company / Trading Name *
                       </label>
                       <input
                         id="quoteCompany"
+                        name="quoteCompany"
+                        aria-labelledby="lbl-quoteCompany"
                         aria-label="Company or Trading Name"
                         type="text"
                         required
+                        maxLength={120}
+                        pattern="^[^<>]*$"
+                        title="Please enter your company name without HTML tags"
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
                         placeholder="e.g. Smith Retail Ltd"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-500"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-hidden focus:border-amber-500"
                       />
                     </div>
                     <div>
-                      <label htmlFor="quoteTelephone" className="block text-slate-300 font-medium mb-1">
+                      <label htmlFor="quoteTelephone" id="lbl-quoteTelephone" className="block text-slate-200 font-medium mb-1">
                         Telephone
                       </label>
                       <input
                         id="quoteTelephone"
+                        name="quoteTelephone"
+                        aria-labelledby="lbl-quoteTelephone"
                         aria-label="Telephone Number"
                         type="tel"
+                        maxLength={30}
+                        pattern="^[0-9+\s().-]*$"
+                        title="Please enter a valid telephone number"
                         value={telephone}
                         onChange={(e) => setTelephone(e.target.value)}
                         placeholder="e.g. 020 7946 0123"
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-500"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-hidden focus:border-amber-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label htmlFor="quoteEmail" className="block text-slate-300 font-medium mb-1">
+                    <label htmlFor="quoteEmail" id="lbl-quoteEmail" className="block text-slate-200 font-medium mb-1">
                       Email Address (for instant quote) *
                     </label>
                     <input
                       id="quoteEmail"
-                      aria-label="Email Address"
+                      name="quoteEmail"
+                      aria-labelledby="lbl-quoteEmail"
+                      aria-label="Email Address for instant quote"
                       type="email"
                       required
+                      maxLength={120}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="e.g. john@smithretail.co.uk"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-hidden focus:border-amber-500"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="quotePremisesAddress" className="block text-slate-300 font-medium mb-1">
+                    <label htmlFor="quotePremisesAddress" id="lbl-quotePremisesAddress" className="block text-slate-200 font-medium mb-1">
                       Premises Address to Assess *
                     </label>
                     <input
                       id="quotePremisesAddress"
+                      name="quotePremisesAddress"
+                      aria-labelledby="lbl-quotePremisesAddress"
                       aria-label="Premises Address to Assess"
                       type="text"
                       required
+                      maxLength={250}
+                      pattern="^[^<>]*$"
+                      title="Please enter premises address without HTML tags"
                       value={premisesAddress}
                       onChange={(e) => setPremisesAddress(e.target.value)}
                       placeholder="e.g. 45 High Street, London, EC1A 1AA"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-hidden focus:border-amber-500"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="quoteAdditionalNotes" className="block text-slate-300 font-medium mb-1">
+                    <label htmlFor="quoteAdditionalNotes" id="lbl-quoteAdditionalNotes" className="block text-slate-200 font-medium mb-1">
                       Notes / Preferred Inspection Dates
                     </label>
                     <input
                       id="quoteAdditionalNotes"
-                      aria-label="Notes or Preferred Inspection Dates"
+                      name="quoteAdditionalNotes"
+                      aria-labelledby="lbl-quoteAdditionalNotes"
+                      aria-label="Additional Notes or Preferred Inspection Dates"
                       type="text"
+                      maxLength={500}
+                      pattern="^[^<>]*$"
+                      title="Notes must not contain HTML tags"
                       value={additionalNotes}
                       onChange={(e) => setAdditionalNotes(e.target.value)}
                       placeholder="e.g. Needs assessment completed next Tuesday"
-                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-hidden focus:border-amber-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-white placeholder-slate-400 focus:outline-hidden focus:border-amber-500"
                     />
                   </div>
 
@@ -1005,7 +1050,7 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                     )}
                   </button>
 
-                  <p className="text-[11px] text-slate-400 text-center leading-normal">
+                  <p className="text-[11px] text-slate-300 text-center leading-normal">
                     Instant dispatch. No phone pressure. Includes official reference number, client portal access, and
                     30-day price hold.
                   </p>
@@ -1020,17 +1065,17 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
                   </div>
                   <div>
                     <div className="font-bold text-slate-900">Charlie Hughes</div>
-                    <div className="text-slate-500 text-[11px]">NEBOSH Fire Safety Certified Assessor</div>
+                    <div className="text-slate-700 text-[11px]">NEBOSH Fire Safety Certified Assessor</div>
                   </div>
                 </div>
-                <p className="text-slate-600 leading-relaxed text-[11px]">
+                <p className="text-slate-700 leading-relaxed text-[11px]">
                   "Every assessment is conducted personally or strictly reviewed under PAS 79-1:2020. You receive an
                   action plan prioritized by genuine life-safety risk rather than pedantic theory."
                 </p>
                 {onGoToAboutCharlie && (
                   <button
                     onClick={onGoToAboutCharlie}
-                    className="text-amber-700 hover:text-amber-800 font-semibold text-xs flex items-center space-x-1"
+                    className="text-amber-800 hover:text-amber-900 font-semibold text-xs flex items-center space-x-1"
                   >
                     <span>Read Charlie's background & credentials</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -1045,11 +1090,11 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
       {/* 4. THE 3-STEP AUDIT-PROOF PROCESS */}
       <section className="bg-slate-50 rounded-3xl p-8 sm:p-12 border border-slate-200/80 space-y-8">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">How It Works</span>
+          <span className="text-xs font-bold text-amber-800 uppercase tracking-wider">How It Works</span>
           <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
             Compliance Made Straightforward
           </h2>
-          <p className="text-slate-500 text-xs sm:text-sm">
+          <p className="text-slate-700 text-xs sm:text-sm">
             Three simple steps to protect your staff, visitors, and business from fire safety enforcement.
           </p>
         </div>
@@ -1091,9 +1136,9 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
       </section>
 
       {/* 5. LEGAL & STATUTORY STATEMENT FOOTER */}
-      <section className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <section className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-700">
         <div className="space-y-1 text-center sm:text-left">
-          <div className="font-semibold text-slate-700">
+          <div className="font-semibold text-slate-800">
             Aurelius Commercial Fire Safety • Regulatory Reform (Fire Safety) Order 2005
           </div>
           <div>
@@ -1105,21 +1150,21 @@ export const PublicEnquiryQuote: React.FC<PublicEnquiryQuoteProps> = ({
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => onOpenPolicy('terms_and_conditions')}
-              className="text-slate-600 hover:text-slate-900 underline"
+              className="text-slate-700 hover:text-slate-900 underline"
             >
               Engagement Terms
             </button>
             <span>•</span>
             <button
               onClick={() => onOpenPolicy('privacy_notice')}
-              className="text-slate-600 hover:text-slate-900 underline"
+              className="text-slate-700 hover:text-slate-900 underline"
             >
               Privacy Notice
             </button>
             <span>•</span>
             <button
               onClick={() => onOpenPolicy('cancellation_policy')}
-              className="text-slate-600 hover:text-slate-900 underline"
+              className="text-slate-700 hover:text-slate-900 underline"
             >
               Cancellation Policy
             </button>

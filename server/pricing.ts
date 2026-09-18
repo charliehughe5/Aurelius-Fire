@@ -27,7 +27,22 @@ export interface QuoteCalculationResult {
   termsSummary: string;
 }
 
-export function calculateQuote(input: PriceCalculationInput): QuoteCalculationResult {
+export function calculateQuote(rawInput: Partial<PriceCalculationInput> = {}): QuoteCalculationResult {
+  const input: PriceCalculationInput = {
+    premisesType: (rawInput && rawInput.premisesType) || 'Offices & Commercial',
+    approxFloorAreaSqM: Number(rawInput && rawInput.approxFloorAreaSqM) || 120,
+    numberOfFloors: Number(rawInput && rawInput.numberOfFloors) || 1,
+    maxOccupancy: Number(rawInput && rawInput.maxOccupancy) || 15,
+    sleepingAccommodation: Boolean(rawInput && rawInput.sleepingAccommodation),
+    multiOccupancyBuilding: Boolean(rawInput && rawInput.multiOccupancyBuilding),
+    isReviewOfPreviousFra: Boolean(rawInput && rawInput.isReviewOfPreviousFra),
+    outOfHours: Boolean(rawInput && rawInput.outOfHours),
+    weekend: Boolean(rawInput && rawInput.weekend),
+    outsideLondonTravel: Boolean(rawInput && rawInput.outsideLondonTravel),
+    followUpVisitRequired: Boolean(rawInput && rawInput.followUpVisitRequired),
+    compartmentationSampling: Boolean(rawInput && rawInput.compartmentationSampling),
+  };
+
   const rules = db.getPricingRules();
   const settings = db.getSettings();
 
@@ -49,7 +64,7 @@ export function calculateQuote(input: PriceCalculationInput): QuoteCalculationRe
   } else if (baseRule) {
     items.push({
       id: `item_${itemCounter++}`,
-      description: `Comprehensive Life Safety Fire Risk Assessment: ${input.premisesType} (PAS 79-1:2020)`,
+      description: `Comprehensive Life Safety Fire Risk Assessment: ${input.premisesType || 'Commercial Premises'} (PAS 79-1:2020)`,
       quantity: 1,
       unitPrice: baseRule.basePrice || 350,
       total: baseRule.basePrice || 350,
